@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import contextlib
 import gc
+import hashlib
+import json
 import logging
 import os
 import platform
@@ -69,6 +71,48 @@ _MPS_DISABLED = False
 _ACTIVE_MODEL_USERS = 0
 _IDLE_UNLOAD_TIMER: threading.Timer | None = None
 
+_RESULT_CACHE_ENABLED = os.environ.get("TRIBEV2_RESULT_CACHE", "1") != "0"
+_RESULT_CACHE_DIR = CACHE_DIR / "results"
+
+
+def _result_cache_key(asset_paths: list[Path], asset_names: list[str], profile: str) -> str:
+    """Cache key from file contents, display names, and profile settings."""
+    digest = hashlib.sha256()
+    digest.update(profile.encode())
+    for name, path in zip(asset_names, asset_paths):
+        digest.update(name.encode("utf-8", "replace"))
+        with open(path, "rb") as fh:
+            for chunk in iter(lambda: fh.read(1024 * 1024), b""):
+                digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _result_cache_get(key: str) -> dict[str, tp.Any] | None:
+    if not _RESULT_CACHE_ENABLED:
+        return None
+    try:
+        with open(_RESULT_CACHE_DIR / f"{key}.json", encoding="utf-8") as fh:
+            cached = json.load(fh)
+    except (OSError, ValueError):
+        return None
+    cached.setdefault("diagnostics", {})["cached"] = True
+    return cached
+
+
+def _result_cache_put(key: str, result: dict[str, tp.Any]) -> None:
+    if not _RESULT_CACHE_ENABLED:
+        return
+    try:
+        _RESULT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+        payload = dict(result)
+        payload.setdefault("diagnostics", {})["cached"] = False
+        tmp_path = _RESULT_CACHE_DIR / f"{key}.{os.getpid()}.tmp"
+        with open(tmp_path, "w", encoding="utf-8") as fh:
+            json.dump(payload, fh)
+        os.replace(tmp_path, _RESULT_CACHE_DIR / f"{key}.json")
+    except (OSError, TypeError, ValueError):
+        LOGGER.debug("Result cache write failed for %s", key, exc_info=True)
+
 
 def is_model_loaded() -> bool:
     """Return whether the process has already materialized at least one model."""
@@ -116,15 +160,27 @@ def analyze_asset(
     profile = _requested_profile()
     result_modality = _result_modality(upload_modality)
 
+    cache_key = _result_cache_key(
+        [asset_path],
+        [asset_name],
+        f"{profile}:fixture" if FIXTURE_MODE else profile,
+    )
+    cached = _result_cache_get(cache_key)
+    if cached is not None:
+        _report_progress(progress_callback, 100, "Complete (cached)")
+        return cached
+
     if FIXTURE_MODE:
-        _report_progress(progress_callback, 100, "Complete")
-        return build_fixture_result(
+        fixture_result = build_fixture_result(
             asset_name_a=asset_name,
             modality=result_modality,
             tie_threshold_pct=TIE_THRESHOLD_PCT,
             threshold_basis=TIE_THRESHOLD_BASIS,
             analysis_diagnostics=_fixture_analysis_diagnostics(profile=profile),
         )
+        _result_cache_put(cache_key, fixture_result)
+        _report_progress(progress_callback, 100, "Complete")
+        return fixture_result
 
     _begin_model_use()
     total_start = time.perf_counter()
@@ -187,6 +243,7 @@ def analyze_asset(
         result["diagnostics"]["summarize_ms"] = round(summarize_ms, 3)
         result["diagnostics"]["total_ms"] = round(_elapsed_ms(total_start), 3)
         _report_progress(progress_callback, 100, "Complete")
+        _result_cache_put(cache_key, result)
         return result
     except Exception:
         if not FIXTURE_FALLBACK:
@@ -286,9 +343,18 @@ def analyze_assets_compare(
 
     profile = _requested_profile()
 
+    cache_key = _result_cache_key(
+        [asset_path_a, asset_path_b],
+        [asset_name_a, asset_name_b],
+        f"{profile}:fixture" if FIXTURE_MODE else profile,
+    )
+    cached = _result_cache_get(cache_key)
+    if cached is not None:
+        _report_progress(progress_callback, 100, "Complete (cached)")
+        return cached
+
     if FIXTURE_MODE:
-        _report_progress(progress_callback, 100, "Complete")
-        return build_fixture_result(
+        fixture_result = build_fixture_result(
             asset_name_a=asset_name_a,
             asset_name_b=asset_name_b,
             modality=result_modality_a,
@@ -296,6 +362,9 @@ def analyze_assets_compare(
             threshold_basis=TIE_THRESHOLD_BASIS,
             analysis_diagnostics=_fixture_analysis_diagnostics(profile=profile),
         )
+        _result_cache_put(cache_key, fixture_result)
+        _report_progress(progress_callback, 100, "Complete")
+        return fixture_result
 
     _begin_model_use()
     total_start = time.perf_counter()
@@ -392,6 +461,7 @@ def analyze_assets_compare(
         result["diagnostics"]["summarize_ms"] = round(summarize_ms, 3)
         result["diagnostics"]["total_ms"] = round(_elapsed_ms(total_start), 3)
         _report_progress(progress_callback, 100, "Complete")
+        _result_cache_put(cache_key, result)
         return result
     except Exception:
         if not FIXTURE_FALLBACK:

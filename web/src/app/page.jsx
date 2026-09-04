@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useCallback } from "react";
+import dynamic from "next/dynamic";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -21,16 +22,11 @@ import {
   SparklesIcon,
   UploadIcon,
 } from "lucide-react";
-import {
-  CartesianGrid,
-  Line,
-  LineChart,
-  ReferenceLine,
-  ResponsiveContainer,
-  Tooltip as RechartsTooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
+
+const ResultsChart = dynamic(() => import("./results-chart"), {
+  ssr: false,
+  loading: () => <div className="h-full w-full animate-pulse rounded-xl bg-zinc-100" />,
+});
 
 import { Button } from "@/components/ui/button";
 import {
@@ -176,7 +172,7 @@ const Card = ({ className = "", children, ...props }) => (
 
 const SectionHeader = ({ tag, title, subtitle }) => (
   <div className="grid gap-1">
-    {tag && <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">{tag}</p>}
+    {tag && <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[hsl(var(--tenant-primary))]">{tag}</p>}
     {title && <h2 className="text-base font-semibold">{title}</h2>}
     {subtitle && <p className="text-sm text-zinc-600">{subtitle}</p>}
   </div>
@@ -384,8 +380,13 @@ export default function HomePage() {
 
   const comparisonRows = useMemo(() => buildComparisonRows({ comparison: result?.comparison, stimulusA: result?.stimulus_a, stimulusB: result?.stimulus_b }), [result]);
 
+  const chartData = useMemo(
+    () => normalizeCurvesForChart([result?.stimulus_a?.curve || [], result?.stimulus_b?.curve || []]),
+    [result],
+  );
+
   return (
-    <main className="flex h-[100svh] flex-col overflow-hidden bg-zinc-50 text-zinc-950">
+    <main className="app-bg flex h-[100svh] flex-col overflow-hidden text-zinc-950">
       <div className="pointer-events-none fixed top-16 right-4 z-40 grid w-[min(360px,calc(100vw-2rem))] gap-2">
         {toasts.map((t) => (
           <div key={t.id} className="pointer-events-auto rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm">
@@ -400,11 +401,11 @@ export default function HomePage() {
         ))}
       </div>
 
-      <header className="sticky top-0 z-30 h-14 border-b border-zinc-200/60 bg-white/95 backdrop-blur-sm">
+      <header className="sticky top-0 z-30 h-14 border-b border-zinc-200/60 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex h-full max-w-[1640px] items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="flex size-8 items-center justify-center rounded-xl border border-zinc-200 bg-zinc-50"><CommandIcon className="size-4" /></div>
-            <div className="text-sm font-semibold">Compare Lab</div>
+            <div className="brand-gradient flex size-8 items-center justify-center rounded-xl shadow-sm shadow-[hsl(243_75%_59%/0.35)]"><CommandIcon className="size-4 text-white" /></div>
+            <div className="text-sm font-semibold tracking-tight">Compare <span className="gradient-text">Lab</span></div>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" className="rounded-xl" onClick={() => setSideRailOpen(!sideRailOpen)}>
@@ -451,8 +452,8 @@ export default function HomePage() {
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className="text-3xl font-semibold">{stim.scorecard?.overall_score}</div>
-                            <div className="text-xs text-zinc-500 uppercase">{stim.scorecard?.overall_band}</div>
+                            <div className="gradient-text text-4xl font-bold tabular-nums">{stim.scorecard?.overall_score}</div>
+                            <div className="text-xs font-medium uppercase tracking-wide text-zinc-500">{stim.scorecard?.overall_band}</div>
                           </div>
                         </div>
                         <p className="text-sm text-zinc-600 mb-4">{stim.scorecard?.summary}</p>
@@ -489,16 +490,7 @@ export default function HomePage() {
                   <Card className="p-5">
                     <SectionHeader tag="Chart" title="Response over time" />
                     <div className="h-64 mt-4">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <LineChart data={normalizeCurvesForChart([result.stimulus_a?.curve || [], result.stimulus_b?.curve || []])}>
-                          <CartesianGrid vertical={false} stroke="#e4e4e7" />
-                          <XAxis dataKey="time" tickFormatter={(v) => `${v}s`} tickLine={false} axisLine={false} />
-                          <YAxis domain={[0, 100]} tickLine={false} axisLine={false} width={30} />
-                          <RechartsTooltip />
-                          <Line type="monotone" dataKey="a" stroke="#18181b" strokeWidth={2} dot={false} />
-                          {result.stimulus_b && <Line type="monotone" dataKey="b" stroke="hsl(var(--tenant-primary))" strokeWidth={2} dot={false} />}
-                        </LineChart>
-                      </ResponsiveContainer>
+                      <ResultsChart data={chartData} showB={Boolean(result.stimulus_b)} />
                     </div>
                   </Card>
 
@@ -525,7 +517,7 @@ export default function HomePage() {
                     </div>
                     <div className="flex gap-2">
                       {STIMULUS_MODES.map((m) => (
-                        <Button key={m.value} type="button" variant="outline" size="sm" onClick={() => { setMode(m.value); setFileA(null); setFileB(null); setTextA(""); setTextB(""); }} className={`rounded-full ${mode === m.value ? "border-[hsl(var(--tenant-primary))]/40 bg-[hsl(var(--tenant-primary))]/10" : ""}`}>
+                        <Button key={m.value} type="button" variant="outline" size="sm" onClick={() => { setMode(m.value); setFileA(null); setFileB(null); setTextA(""); setTextB(""); }} className={`rounded-full ${mode === m.value ? "brand-gradient border-transparent text-white shadow-sm" : ""}`}>
                           <m.icon className="mr-2 size-4" /> {m.label}
                         </Button>
                       ))}
@@ -535,7 +527,7 @@ export default function HomePage() {
                   <Card className="grid lg:grid-cols-[1fr_72px_1fr] overflow-hidden">
                     <StimulusPanel inputKey={inputKey} title="Version A" description="Current version" mode={mode} file={fileA} textValue={textA} previewUrl={previewA} onSelect={setFileA} onTextChange={setTextA} />
                     <div className="hidden lg:flex items-center justify-center border-x bg-zinc-50">
-                      <span className="flex size-10 items-center justify-center rounded-full border bg-white text-xs font-bold text-zinc-400">VS</span>
+                      <span className="brand-gradient flex size-10 items-center justify-center rounded-full text-xs font-bold text-white shadow-sm">VS</span>
                     </div>
                     <StimulusPanel inputKey={`${inputKey}-b`} title="Version B" description="Alternative" mode={mode} file={fileB} textValue={textB} previewUrl={previewB} optional onSelect={setFileB} onTextChange={setTextB} />
                   </Card>
@@ -549,7 +541,7 @@ export default function HomePage() {
                     <div className="flex justify-between p-2 rounded-xl border bg-zinc-50"><span className="flex items-center gap-2">{uploadB ? <CheckCircle2Icon className="size-4 text-[hsl(var(--tenant-primary))]" /> : <CircleDashedIcon className="size-4 text-zinc-400" />} Version B</span></div>
                   </div>
 
-                  <Button type="submit" disabled={busy || !uploadA} className="w-full rounded-2xl bg-[hsl(var(--tenant-primary))] hover:bg-[hsl(var(--tenant-primary))]/90 text-white">
+                  <Button type="submit" disabled={busy || !uploadA} className="brand-gradient w-full rounded-2xl text-white shadow-lg shadow-[hsl(243_75%_59%/0.25)] hover:opacity-90 disabled:opacity-50">
                     {busy ? <LoaderCircleIcon className="mr-2 size-4 animate-spin" /> : <PlayIcon className="mr-2 size-4" />}
                     {uploadB ? "Compare versions" : "Review version"}
                   </Button>
@@ -557,7 +549,7 @@ export default function HomePage() {
                   {busy && (
                     <div className="grid gap-3 p-4 rounded-2xl border bg-zinc-50">
                       <div className="flex justify-between text-sm font-medium"><span>Progress</span><span>{progress}%</span></div>
-                      <Progress value={progress} className="h-2" />
+                      <Progress value={progress} className="h-2 progress-shine" />
                       <div className="text-xs text-zinc-500">{PROGRESS_PHASES[activePhase]?.label || "Processing..."}</div>
                     </div>
                   )}
