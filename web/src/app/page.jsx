@@ -6,6 +6,7 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon,
   CheckCircle2Icon,
+  CheckIcon,
   CircleDashedIcon,
   CommandIcon,
   EyeIcon,
@@ -21,6 +22,7 @@ import {
   PlayIcon,
   SparklesIcon,
   UploadIcon,
+  ZapIcon,
 } from "lucide-react";
 
 const ResultsChart = dynamic(() => import("./results-chart"), {
@@ -198,41 +200,131 @@ function StimulusCue({ label, previewUrl, mode, size = "md" }) {
 
 function QuickStartDialog({ open, onOpenChange }) {
   const steps = [
-    { icon: Layers2Icon, eyebrow: "Setup", title: "Choose one format", headline: "Start with one shared content type.", body: "Keep both versions in the same format so the comparison stays fair." },
-    { icon: EyeIcon, eyebrow: "Inputs", title: "Upload versions", headline: "Load the versions you want to test.", body: "One upload gives a single review. Two unlocks side-by-side comparison." },
-    { icon: ScanSearchIcon, eyebrow: "Results", title: "Run the review", headline: "Let the app build the evidence.", body: "Get scores, a response curve, plain-language notes, and side-by-side rows." },
-    { icon: CommandIcon, eyebrow: "Interpretation", title: "Read the results", headline: "Treat this as decision support, not proof.", body: "Use the table, visuals, and notes to narrow choices before deeper testing." },
+    {
+      icon: Layers2Icon,
+      eyebrow: "Step 1 · Setup",
+      title: "Choose one format",
+      headline: "Start with one shared content type.",
+      body: "Video, audio, or text — pick the format both versions share so the comparison stays fair.",
+      points: ["Video and image files", "Audio clips", "Pasted plain text"],
+      tip: "Have one version as video and one as text? Export them to the same format first — mixed-format pairs can't be compared.",
+    },
+    {
+      icon: EyeIcon,
+      eyebrow: "Step 2 · Inputs",
+      title: "Upload versions",
+      headline: "Load the versions you want to test.",
+      body: "Version A is required. Add Version B to unlock the side-by-side comparison with a winner per row.",
+      points: ["One upload = single review", "Two uploads = head-to-head", "Previews appear instantly"],
+      tip: "Upload the same file as both versions to sanity-check the pipeline before a real matchup.",
+    },
+    {
+      icon: ScanSearchIcon,
+      eyebrow: "Step 3 · Analysis",
+      title: "Run the review",
+      headline: "Let the app build the evidence.",
+      body: "The TRIBE model reads each version and returns scores, a response curve over time, and plain-language notes.",
+      points: ["Live progress while it works", "Response curve per version", "Repeat runs are instant (cached)"],
+      tip: "The first analysis loads the model. After that, repeat runs of the same file finish in milliseconds.",
+    },
+    {
+      icon: CommandIcon,
+      eyebrow: "Step 4 · Decision",
+      title: "Read the results",
+      headline: "Treat this as decision support, not proof.",
+      body: "Read the summary first, then the comparison table, then the curve. Close scores are effectively ties.",
+      points: ["Overall score + band", "Winner per measure", "Key observations"],
+      tip: "When two versions land within a few points, pick on taste or budget — not the tiny score gap.",
+    },
   ];
   const [active, setActive] = useState(0);
   const step = steps[active];
+  const isLast = active === steps.length - 1;
+
+  useEffect(() => {
+    if (open) setActive(0);
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e) => {
+      if (e.key === "ArrowRight") setActive((v) => Math.min(steps.length - 1, v + 1));
+      if (e.key === "ArrowLeft") setActive((v) => Math.max(0, v - 1));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-[28px] border-zinc-200/80 bg-white p-0 sm:max-w-2xl">
-        <DialogHeader className="border-b border-zinc-200/70 bg-zinc-50 px-6 py-5 rounded-t-[28px]">
-          <DialogTitle>Quick start guide</DialogTitle>
-          <DialogDescription>Use this to compare one or two versions before you move forward.</DialogDescription>
+      <DialogContent className="overflow-hidden rounded-[28px] border-zinc-200/80 bg-white p-0 sm:max-w-3xl">
+        <DialogHeader className="brand-gradient relative border-0 px-6 py-6 text-left">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(40rem_12rem_at_80%_-20%,rgba(255,255,255,0.35),transparent_60%)]" aria-hidden />
+          <div className="relative flex items-center gap-3">
+            <div className="flex size-11 items-center justify-center rounded-2xl bg-white/15 backdrop-blur"><SparklesIcon className="size-5 text-white" /></div>
+            <div className="grid gap-0.5">
+              <DialogTitle className="text-lg font-semibold text-white">Welcome to Compare Lab</DialogTitle>
+              <DialogDescription className="text-sm text-white/80">Four steps from upload to a confident call.</DialogDescription>
+            </div>
+            <span className="ml-auto rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-white">{active + 1} / {steps.length}</span>
+          </div>
         </DialogHeader>
-        <div className="grid gap-5 px-6 py-5 md:grid-cols-[220px_minmax(0,1fr)]">
-          <div className="grid gap-2">
-            {steps.map((s, i) => (
-              <button key={i} type="button" onClick={() => setActive(i)} className={`flex items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-colors ${active === i ? "border-[hsl(var(--tenant-primary))]/35 bg-[hsl(var(--tenant-primary))]/[0.07]" : "border-zinc-200/70 bg-zinc-50 hover:bg-zinc-100"}`}>
-                <s.icon className={`size-4 ${active === i ? "text-[hsl(var(--tenant-primary))]" : "text-zinc-500"}`} />
-                <span className="text-sm font-semibold text-zinc-950">{s.title}</span>
-              </button>
+
+        <div className="grid gap-5 px-6 py-5 md:grid-cols-[240px_minmax(0,1fr)]">
+          <div className="relative grid content-start gap-2">
+            <div className="absolute bottom-8 left-[27px] top-8 w-px bg-zinc-200" aria-hidden />
+            {steps.map((s, i) => {
+              const done = i < active;
+              return (
+                <button key={i} type="button" onClick={() => setActive(i)} className={`relative flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-all ${active === i ? "border-transparent bg-[hsl(var(--tenant-primary))]/[0.07] shadow-sm ring-1 ring-[hsl(var(--tenant-primary))]/35" : "border-transparent hover:bg-zinc-50"}`}>
+                  <span className={`z-10 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${active === i ? "brand-gradient text-white" : done ? "bg-[hsl(var(--tenant-primary))]/15 text-[hsl(var(--tenant-primary))]" : "border border-zinc-200 bg-white text-zinc-400"}`}>
+                    {done ? <CheckIcon className="size-3.5" /> : i + 1}
+                  </span>
+                  <span className={`text-sm font-semibold ${active === i ? "text-zinc-950" : "text-zinc-500"}`}>{s.title}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div key={active} className="qs-enter grid content-start gap-4 rounded-2xl border border-zinc-200/70 bg-zinc-50/60 p-5">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[hsl(var(--tenant-primary))]">{step.eyebrow}</p>
+              <h3 className="mt-1 text-xl font-semibold tracking-tight text-zinc-950">{step.headline}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-zinc-600">{step.body}</p>
+            </div>
+            <ul className="grid gap-1.5">
+              {step.points.map((pt) => (
+                <li key={pt} className="flex items-center gap-2 text-sm text-zinc-700">
+                  <CheckCircle2Icon className="size-4 shrink-0 text-[hsl(var(--tenant-primary))]" /> {pt}
+                </li>
+              ))}
+            </ul>
+            <div className="rounded-2xl border border-[hsl(var(--tenant-primary))]/20 bg-white p-3.5">
+              <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[hsl(var(--tenant-primary))]"><ZapIcon className="size-3.5" /> Pro tip</div>
+              <p className="mt-1 text-sm text-zinc-600">{step.tip}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center justify-between gap-3 border-t border-zinc-200/70 px-6 py-4">
+          <div className="flex items-center gap-1.5">
+            {steps.map((_, i) => (
+              <button key={i} type="button" aria-label={`Go to step ${i + 1}`} onClick={() => setActive(i)} className={`h-1.5 rounded-full transition-all ${i === active ? "brand-gradient w-6" : i < active ? "w-1.5 bg-[hsl(var(--tenant-primary))]/50" : "w-1.5 bg-zinc-200"}`} />
             ))}
           </div>
-          <div className="grid gap-4 rounded-2xl border border-zinc-200/70 bg-white p-4">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.16em] text-zinc-500">{step.eyebrow}</p>
-              <h3 className="text-base font-semibold text-zinc-950 mt-1">{step.headline}</h3>
-              <p className="text-sm text-zinc-600 mt-2">{step.body}</p>
-            </div>
-            <div className="flex items-center justify-between border-t border-zinc-200/70 pt-4">
-              <Button variant="outline" size="sm" onClick={() => setActive(Math.max(0, active - 1))} disabled={active === 0}>Prev</Button>
-              <span className="text-xs text-zinc-500">Step {active + 1} of {steps.length}</span>
-              <Button variant="outline" size="sm" onClick={() => setActive(Math.min(steps.length - 1, active + 1))} disabled={active === steps.length - 1}>Next</Button>
-            </div>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" className="rounded-xl text-zinc-500" onClick={() => setActive(Math.max(0, active - 1))} disabled={active === 0}>
+              <ArrowLeftIcon className="mr-1.5 size-4" /> Back
+            </Button>
+            {isLast ? (
+              <Button size="sm" className="brand-gradient rounded-xl text-white shadow-md shadow-[hsl(243_75%_59%/0.25)] hover:opacity-90" onClick={() => onOpenChange(false)}>
+                Start comparing <ArrowRightIcon className="ml-1.5 size-4" />
+              </Button>
+            ) : (
+              <Button size="sm" className="brand-gradient rounded-xl text-white shadow-md shadow-[hsl(243_75%_59%/0.25)] hover:opacity-90" onClick={() => setActive(Math.min(steps.length - 1, active + 1))}>
+                Next <ArrowRightIcon className="ml-1.5 size-4" />
+              </Button>
+            )}
           </div>
         </div>
       </DialogContent>
