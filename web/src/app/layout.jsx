@@ -6,6 +6,12 @@ export const metadata = {
   description: "Structured side-by-side video comparison using TRIBE-derived response curves.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

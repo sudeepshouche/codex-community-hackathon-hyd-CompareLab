@@ -26,25 +26,25 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 4%;
+    --background: 40 33% 98%;
+    --foreground: 160 9% 14%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 4%;
+    --card-foreground: 160 9% 14%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 4%;
-    --primary: 243 75% 59%;
+    --popover-foreground: 160 9% 14%;
+    --primary: 152 16% 30%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 6% 10%;
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
-    --accent: 240 5% 96%;
-    --accent-foreground: 240 6% 10%;
-    --destructive: 0 84% 60%;
-    --border: 240 6% 90%;
-    --ring: 243 75% 59%;
-    --input: 240 6% 90%;
-    --tenant-primary: 243 75% 59%;
+    --secondary: 40 18% 95%;
+    --secondary-foreground: 160 9% 14%;
+    --muted: 40 18% 95%;
+    --muted-foreground: 160 6% 40%;
+    --accent: 40 18% 94%;
+    --accent-foreground: 160 9% 14%;
+    --destructive: 0 70% 48%;
+    --border: 40 12% 89%;
+    --ring: 152 16% 30%;
+    --input: 40 12% 89%;
+    --tenant-primary: 152 16% 36%;
     --radius: 0.625rem;
   }
 
@@ -96,43 +96,6 @@
     color: inherit;
     text-decoration: none;
   }
-}
-
-.brand-gradient {
-  background-image: linear-gradient(120deg, hsl(243 75% 59%), hsl(217 91% 60%));
-}
-
-.gradient-text {
-  background-image: linear-gradient(120deg, hsl(243 75% 59%), hsl(217 91% 60%));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.app-bg {
-  background-color: hsl(var(--background));
-  background-image:
-    radial-gradient(60rem 32rem at 85% -10%, hsl(243 75% 59% / 0.08), transparent 60%),
-    radial-gradient(50rem 28rem at -10% 0%, hsl(199 89% 48% / 0.07), transparent 55%);
-}
-
-.progress-shine > [data-slot="progress-indicator"] {
-  position: relative;
-  background-image: linear-gradient(90deg, hsl(243 75% 59%), hsl(217 91% 60%));
-}
-
-.progress-shine > [data-slot="progress-indicator"]::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: linear-gradient(110deg, transparent 25%, rgb(255 255 255 / 0.4) 50%, transparent 75%);
-  background-size: 200% 100%;
-  animation: progress-shine 1.6s linear infinite;
-}
-
-@keyframes progress-shine {
-  from { background-position: 200% 0; }
-  to { background-position: -200% 0; }
 }
 
 .qs-enter {

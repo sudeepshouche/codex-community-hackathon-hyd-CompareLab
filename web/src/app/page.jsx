@@ -255,8 +255,8 @@ function QuickStartDialog({ open, onOpenChange }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="overflow-hidden rounded-[28px] border-zinc-200/80 bg-white p-0 sm:max-w-3xl">
-        <DialogHeader className="brand-gradient relative border-0 px-6 py-6 text-left">
+      <DialogContent className="max-h-[92svh] overflow-hidden overflow-y-auto rounded-[28px] border-zinc-200/80 bg-white p-0 sm:max-w-3xl">
+        <DialogHeader className="bg-primary relative border-0 px-6 py-6 text-left">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(40rem_12rem_at_80%_-20%,rgba(255,255,255,0.35),transparent_60%)]" aria-hidden />
           <div className="relative flex items-center gap-3">
             <div className="flex size-11 items-center justify-center rounded-2xl bg-white/15 backdrop-blur"><SparklesIcon className="size-5 text-white" /></div>
@@ -275,7 +275,7 @@ function QuickStartDialog({ open, onOpenChange }) {
               const done = i < active;
               return (
                 <button key={i} type="button" onClick={() => setActive(i)} className={`relative flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-all ${active === i ? "border-transparent bg-[hsl(var(--tenant-primary))]/[0.07] shadow-sm ring-1 ring-[hsl(var(--tenant-primary))]/35" : "border-transparent hover:bg-zinc-50"}`}>
-                  <span className={`z-10 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${active === i ? "brand-gradient text-white" : done ? "bg-[hsl(var(--tenant-primary))]/15 text-[hsl(var(--tenant-primary))]" : "border border-zinc-200 bg-white text-zinc-400"}`}>
+                  <span className={`z-10 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${active === i ? "bg-primary text-white" : done ? "bg-[hsl(var(--tenant-primary))]/15 text-[hsl(var(--tenant-primary))]" : "border border-zinc-200 bg-white text-zinc-400"}`}>
                     {done ? <CheckIcon className="size-3.5" /> : i + 1}
                   </span>
                   <span className={`text-sm font-semibold ${active === i ? "text-zinc-950" : "text-zinc-500"}`}>{s.title}</span>
@@ -310,11 +310,11 @@ function QuickStartDialog({ open, onOpenChange }) {
               <ArrowLeftIcon className="mr-1.5 size-4" /> Back
             </Button>
             {isLast ? (
-              <Button size="sm" className="brand-gradient rounded-xl text-white shadow-md shadow-[hsl(243_75%_59%/0.25)] hover:opacity-90" onClick={() => onOpenChange(false)}>
+              <Button size="sm" className="bg-primary rounded-xl text-white shadow-md hover:opacity-90" onClick={() => onOpenChange(false)}>
                 Start comparing <ArrowRightIcon className="ml-1.5 size-4" />
               </Button>
             ) : (
-              <Button size="sm" className="brand-gradient rounded-xl text-white shadow-md shadow-[hsl(243_75%_59%/0.25)] hover:opacity-90" onClick={() => setActive(Math.min(steps.length - 1, active + 1))}>
+              <Button size="sm" className="bg-primary rounded-xl text-white shadow-md hover:opacity-90" onClick={() => setActive(Math.min(steps.length - 1, active + 1))}>
                 Next <ArrowRightIcon className="ml-1.5 size-4" />
               </Button>
             )}
@@ -342,7 +342,7 @@ function StimulusPanel({ inputKey, title, description, mode, file, textValue, pr
         <Textarea value={textValue} onChange={(e) => onTextChange(e.target.value)} placeholder="Paste your copy here" className="rounded-2xl" />
       ) : (
         <div className="flex items-center gap-2 rounded-2xl border border-zinc-200 bg-white px-2 py-2">
-          <label className="cursor-pointer rounded-xl border border-zinc-200 bg-zinc-50 px-3 py-1 text-sm font-medium">
+          <label className="cursor-pointer rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm font-medium">
             Choose file
             <Input key={inputKey} type="file" accept={currentMode.accept} onChange={(e) => onSelect(e.target.files?.[0] || null)} className="sr-only" />
           </label>
@@ -470,7 +470,7 @@ export default function HomePage() {
   );
 
   return (
-    <main className="app-bg flex h-[100svh] flex-col overflow-hidden text-zinc-950">
+    <main className="bg-background flex h-[100svh] flex-col overflow-hidden text-zinc-950">
       <div className="pointer-events-none fixed top-16 right-4 z-40 grid w-[min(360px,calc(100vw-2rem))] gap-2">
         {toasts.map((t) => (
           <div key={t.id} className="pointer-events-auto rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm">
@@ -488,8 +488,8 @@ export default function HomePage() {
       <header className="sticky top-0 z-30 h-14 border-b border-zinc-200/60 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex h-full max-w-[1640px] items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="brand-gradient flex size-8 items-center justify-center rounded-xl shadow-sm shadow-[hsl(243_75%_59%/0.35)]"><CommandIcon className="size-4 text-white" /></div>
-            <div className="text-sm font-semibold tracking-tight">Compare <span className="gradient-text">Lab</span></div>
+            <div className="bg-primary flex size-8 items-center justify-center rounded-xl shadow-sm"><CommandIcon className="size-4 text-white" /></div>
+            <div className="text-sm font-semibold tracking-tight">Compare <span className="text-primary">Lab</span></div>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" className="rounded-xl" aria-label="Quick start" onClick={() => setShowQuickStart(true)}>
@@ -500,7 +500,7 @@ export default function HomePage() {
       </header>
 
       <div className="grid h-[calc(100svh-3.5rem)] w-full grid-cols-1 overflow-hidden">
-        <section className="overflow-y-auto px-4 py-5 sm:px-6">
+        <section className="overflow-y-auto px-4 pt-5 pb-28 sm:px-6 xl:pb-8">
           <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
             <Card className="px-5 py-5">
               <div className="flex justify-between items-start gap-4">
@@ -533,7 +533,7 @@ export default function HomePage() {
                             </div>
                           </div>
                           <div className="text-right">
-                            <div className="gradient-text text-4xl font-bold tabular-nums">{stim.scorecard?.overall_score}</div>
+                            <div className="text-primary text-4xl font-bold tabular-nums">{stim.scorecard?.overall_score}</div>
                             <div className="text-xs font-medium uppercase tracking-wide text-zinc-500">{stim.scorecard?.overall_band}</div>
                           </div>
                         </div>
@@ -551,7 +551,8 @@ export default function HomePage() {
                 {result.stimulus_b && comparisonRows.length > 0 && (
                   <Card className="p-5 grid gap-3">
                     <SectionHeader tag="Comparison" title="Where each version leads" />
-                    <div className="rounded-2xl border border-zinc-200/70 bg-white overflow-hidden text-sm">
+                    <div className="overflow-x-auto rounded-2xl border border-zinc-200/70 bg-white text-sm">
+                      <div className="min-w-[560px]">
                        {comparisonRows.map((r, i) => (
                          <div key={i} className="border-b border-zinc-200/60 last:border-b-0">
                            <div className="grid grid-cols-[220px_1fr_1fr_96px] bg-zinc-50 font-medium">
@@ -563,6 +564,7 @@ export default function HomePage() {
                            <div className="p-3 text-xs text-zinc-600 bg-white">{r.insight}</div>
                          </div>
                        ))}
+                      </div>
                     </div>
                   </Card>
                 )}
@@ -598,7 +600,7 @@ export default function HomePage() {
                     </div>
                     <div className="flex gap-2">
                       {STIMULUS_MODES.map((m) => (
-                        <Button key={m.value} type="button" variant="outline" size="sm" onClick={() => { setMode(m.value); setFileA(null); setFileB(null); setTextA(""); setTextB(""); }} className={`rounded-full ${mode === m.value ? "brand-gradient border-transparent text-white shadow-sm" : ""}`}>
+                        <Button key={m.value} type="button" variant="outline" size="sm" onClick={() => { setMode(m.value); setFileA(null); setFileB(null); setTextA(""); setTextB(""); }} className={`h-10 rounded-full px-4 ${mode === m.value ? "border-transparent bg-primary text-white" : ""}`}>
                           <m.icon className="mr-2 size-4" /> {m.label}
                         </Button>
                       ))}
@@ -608,21 +610,23 @@ export default function HomePage() {
                   <Card className="grid lg:grid-cols-[1fr_72px_1fr] overflow-hidden">
                     <StimulusPanel inputKey={inputKey} title="Version A" description="Current version" mode={mode} file={fileA} textValue={textA} previewUrl={previewA} onSelect={setFileA} onTextChange={setTextA} />
                     <div className="hidden lg:flex items-center justify-center border-x bg-zinc-50">
-                      <span className="brand-gradient flex size-10 items-center justify-center rounded-full text-xs font-bold text-white shadow-sm">VS</span>
+                      <span className="bg-primary flex size-10 items-center justify-center rounded-full text-xs font-bold text-white shadow-sm">VS</span>
                     </div>
                     <StimulusPanel inputKey={`${inputKey}-b`} title="Version B" description="Alternative" mode={mode} file={fileB} textValue={textB} previewUrl={previewB} optional onSelect={setFileB} onTextChange={setTextB} />
                   </Card>
                 </div>
 
-                <aside className="h-fit grid gap-4 rounded-3xl border bg-white p-5 xl:sticky xl:top-5">
-                  <SectionHeader tag="Review" title="Ready to analyze" subtitle="Add files and start" />
-                  
-                  <div className="grid gap-2 text-sm">
+                <aside className="fixed inset-x-0 bottom-0 z-20 grid gap-3 border-t bg-white/95 p-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] backdrop-blur-md xl:static xl:h-fit xl:gap-4 xl:rounded-3xl xl:border xl:bg-white xl:p-5">
+                  <div className="hidden xl:block">
+                    <SectionHeader tag="Review" title="Ready to analyze" subtitle="Add files and start" />
+                  </div>
+
+                  <div className="hidden gap-2 text-sm xl:grid">
                     <div className="flex justify-between p-2 rounded-xl border bg-zinc-50"><span className="flex items-center gap-2">{uploadA ? <CheckCircle2Icon className="size-4 text-[hsl(var(--tenant-primary))]" /> : <CircleDashedIcon className="size-4 text-zinc-400" />} Version A</span></div>
                     <div className="flex justify-between p-2 rounded-xl border bg-zinc-50"><span className="flex items-center gap-2">{uploadB ? <CheckCircle2Icon className="size-4 text-[hsl(var(--tenant-primary))]" /> : <CircleDashedIcon className="size-4 text-zinc-400" />} Version B</span></div>
                   </div>
 
-                  <Button type="submit" disabled={busy || !uploadA} className="brand-gradient w-full rounded-2xl text-white shadow-lg shadow-[hsl(243_75%_59%/0.25)] hover:opacity-90 disabled:opacity-50">
+                  <Button type="submit" disabled={busy || !uploadA} className="bg-primary w-full rounded-2xl text-white shadow-lg hover:opacity-90 disabled:opacity-50">
                     {busy ? <LoaderCircleIcon className="mr-2 size-4 animate-spin" /> : <PlayIcon className="mr-2 size-4" />}
                     {uploadB ? "Compare versions" : "Review version"}
                   </Button>
@@ -630,7 +634,7 @@ export default function HomePage() {
                   {busy && (
                     <div className="grid gap-3 p-4 rounded-2xl border bg-zinc-50">
                       <div className="flex justify-between text-sm font-medium"><span>Progress</span><span>{progress}%</span></div>
-                      <Progress value={progress} className="h-2 progress-shine" />
+                      <Progress value={progress} className="h-2" />
                       <div className="text-xs text-zinc-500">{PROGRESS_PHASES[activePhase]?.label || "Processing..."}</div>
                     </div>
                   )}
