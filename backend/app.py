@@ -160,27 +160,21 @@ def analyze_asset(
     profile = _requested_profile()
     result_modality = _result_modality(upload_modality)
 
-    cache_key = _result_cache_key(
-        [asset_path],
-        [asset_name],
-        f"{profile}:fixture" if FIXTURE_MODE else profile,
-    )
-    cached = _result_cache_get(cache_key)
-    if cached is not None:
-        _report_progress(progress_callback, 100, "Complete (cached)")
-        return cached
-
     if FIXTURE_MODE:
-        fixture_result = build_fixture_result(
+        _report_progress(progress_callback, 100, "Complete")
+        return build_fixture_result(
             asset_name_a=asset_name,
             modality=result_modality,
             tie_threshold_pct=TIE_THRESHOLD_PCT,
             threshold_basis=TIE_THRESHOLD_BASIS,
             analysis_diagnostics=_fixture_analysis_diagnostics(profile=profile),
         )
-        _result_cache_put(cache_key, fixture_result)
-        _report_progress(progress_callback, 100, "Complete")
-        return fixture_result
+
+    cache_key = _result_cache_key([asset_path], [asset_name], profile)
+    cached = _result_cache_get(cache_key)
+    if cached is not None:
+        _report_progress(progress_callback, 100, "Complete (cached)")
+        return cached
 
     _begin_model_use()
     total_start = time.perf_counter()
@@ -343,18 +337,9 @@ def analyze_assets_compare(
 
     profile = _requested_profile()
 
-    cache_key = _result_cache_key(
-        [asset_path_a, asset_path_b],
-        [asset_name_a, asset_name_b],
-        f"{profile}:fixture" if FIXTURE_MODE else profile,
-    )
-    cached = _result_cache_get(cache_key)
-    if cached is not None:
-        _report_progress(progress_callback, 100, "Complete (cached)")
-        return cached
-
     if FIXTURE_MODE:
-        fixture_result = build_fixture_result(
+        _report_progress(progress_callback, 100, "Complete")
+        return build_fixture_result(
             asset_name_a=asset_name_a,
             asset_name_b=asset_name_b,
             modality=result_modality_a,
@@ -362,9 +347,16 @@ def analyze_assets_compare(
             threshold_basis=TIE_THRESHOLD_BASIS,
             analysis_diagnostics=_fixture_analysis_diagnostics(profile=profile),
         )
-        _result_cache_put(cache_key, fixture_result)
-        _report_progress(progress_callback, 100, "Complete")
-        return fixture_result
+
+    cache_key = _result_cache_key(
+        [asset_path_a, asset_path_b],
+        [asset_name_a, asset_name_b],
+        profile,
+    )
+    cached = _result_cache_get(cache_key)
+    if cached is not None:
+        _report_progress(progress_callback, 100, "Complete (cached)")
+        return cached
 
     _begin_model_use()
     total_start = time.perf_counter()

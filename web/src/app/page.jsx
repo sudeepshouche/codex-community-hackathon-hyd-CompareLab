@@ -337,12 +337,7 @@ function QuickStartDialog({ open, onOpenChange }) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between gap-3 border-t border-zinc-200/70 px-6 py-4">
-          <div className="flex items-center gap-1.5">
-            {steps.map((_, i) => (
-              <button key={i} type="button" aria-label={`Go to step ${i + 1}`} onClick={() => setActive(i)} className={`h-1.5 rounded-full transition-all ${i === active ? "brand-gradient w-6" : i < active ? "w-1.5 bg-[hsl(var(--tenant-primary))]/50" : "w-1.5 bg-zinc-200"}`} />
-            ))}
-          </div>
+        <div className="flex items-center justify-end gap-3 border-t border-zinc-200/70 px-6 py-4">
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm" className="rounded-xl text-zinc-500" onClick={() => setActive(Math.max(0, active - 1))} disabled={active === 0}>
               <ArrowLeftIcon className="mr-1.5 size-4" /> Back

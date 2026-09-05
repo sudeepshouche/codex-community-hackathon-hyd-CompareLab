@@ -12,6 +12,5 @@
     },
     "archive": {"enabled": true, "command": null},
     "check": {"enabled": true, "command": null}
-  },
-  "resources": {"preview": {"cpu": 2, "memoryGiB": 4}}
+  }
 }
