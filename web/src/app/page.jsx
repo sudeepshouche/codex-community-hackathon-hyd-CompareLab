@@ -25,7 +25,7 @@ import {
 
 const ResultsChart = dynamic(() => import("./results-chart"), {
   ssr: false,
-  loading: () => <div className="h-full w-full animate-pulse rounded-xl bg-zinc-100" />,
+  loading: () => <div className="h-full w-full animate-pulse rounded-xl bg-stone-100" />,
 });
 
 import { Button } from "@/components/ui/button";
@@ -167,14 +167,14 @@ function useObjectUrl(file) {
 // ── Shared UI Atoms ────────────────────────────────────────
 
 const Card = ({ className = "", children, ...props }) => (
-  <section className={`rounded-3xl border border-zinc-200/70 bg-white ${className}`} {...props}>{children}</section>
+  <section className={`rounded-3xl border border-stone-200/70 bg-white ${className}`} {...props}>{children}</section>
 );
 
 const SectionHeader = ({ tag, title, subtitle }) => (
   <div className="grid gap-1">
     {tag && <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[hsl(var(--tenant-primary))]">{tag}</p>}
     {title && <h2 className="text-base font-semibold">{title}</h2>}
-    {subtitle && <p className="text-sm text-zinc-600">{subtitle}</p>}
+    {subtitle && <p className="text-sm text-stone-600">{subtitle}</p>}
   </div>
 );
 
@@ -184,7 +184,7 @@ function StimulusCue({ label, previewUrl, mode, size = "md" }) {
   const classes = size === "sm" ? "size-8 rounded-lg" : "size-12 rounded-xl";
 
   return showPreview ? (
-    <div className={`${classes} overflow-hidden border border-zinc-200/70 bg-[hsl(var(--tenant-primary))]/10`}>
+    <div className={`${classes} overflow-hidden border border-stone-200/70 bg-[hsl(var(--tenant-primary))]/10`}>
       <img src={previewUrl} alt="preview" className="h-full w-full object-cover" />
     </div>
   ) : (
@@ -255,7 +255,7 @@ function QuickStartDialog({ open, onOpenChange }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92svh] overflow-hidden overflow-y-auto rounded-[28px] border-zinc-200/80 bg-white p-0 sm:max-w-3xl">
+      <DialogContent className="max-h-[92svh] overflow-y-auto rounded-[28px] border-stone-200/80 bg-white p-0 sm:max-w-3xl">
         <DialogHeader className="bg-primary relative border-0 px-6 py-6 text-left">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(40rem_12rem_at_80%_-20%,rgba(255,255,255,0.35),transparent_60%)]" aria-hidden />
           <div className="relative flex items-center gap-3">
@@ -270,43 +270,43 @@ function QuickStartDialog({ open, onOpenChange }) {
 
         <div className="grid gap-5 px-6 py-5 md:grid-cols-[240px_minmax(0,1fr)]">
           <div className="relative grid content-start gap-2">
-            <div className="absolute bottom-8 left-[27px] top-8 w-px bg-zinc-200" aria-hidden />
+            <div className="absolute bottom-8 left-[27px] top-8 w-px bg-stone-200" aria-hidden />
             {steps.map((s, i) => {
               const done = i < active;
               return (
-                <button key={i} type="button" onClick={() => setActive(i)} className={`relative flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-all ${active === i ? "border-transparent bg-[hsl(var(--tenant-primary))]/[0.07] shadow-sm ring-1 ring-[hsl(var(--tenant-primary))]/35" : "border-transparent hover:bg-zinc-50"}`}>
-                  <span className={`z-10 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${active === i ? "bg-primary text-white" : done ? "bg-[hsl(var(--tenant-primary))]/15 text-[hsl(var(--tenant-primary))]" : "border border-zinc-200 bg-white text-zinc-400"}`}>
+                <button key={i} type="button" onClick={() => setActive(i)} className={`relative flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-all ${active === i ? "border-transparent bg-[hsl(var(--tenant-primary))]/[0.07] shadow-sm ring-1 ring-[hsl(var(--tenant-primary))]/35" : "border-transparent hover:bg-stone-50"}`}>
+                  <span className={`z-10 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${active === i ? "bg-primary text-white" : done ? "bg-[hsl(var(--tenant-primary))]/15 text-[hsl(var(--tenant-primary))]" : "border border-stone-200 bg-white text-stone-400"}`}>
                     {done ? <CheckIcon className="size-3.5" /> : i + 1}
                   </span>
-                  <span className={`text-sm font-semibold ${active === i ? "text-zinc-950" : "text-zinc-500"}`}>{s.title}</span>
+                  <span className={`text-sm font-semibold ${active === i ? "text-stone-950" : "text-stone-500"}`}>{s.title}</span>
                 </button>
               );
             })}
           </div>
 
-          <div key={active} className="qs-enter grid content-start gap-4 rounded-2xl border border-zinc-200/70 bg-zinc-50/60 p-5">
+          <div key={active} className="qs-enter grid content-start gap-4 rounded-2xl border border-stone-200/70 bg-stone-50/60 p-5">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[hsl(var(--tenant-primary))]">{step.eyebrow}</p>
-              <h3 className="mt-1 text-xl font-semibold tracking-tight text-zinc-950">{step.headline}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-zinc-600">{step.body}</p>
+              <h3 className="mt-1 text-xl font-semibold tracking-tight text-stone-950">{step.headline}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-stone-600">{step.body}</p>
             </div>
             <ul className="grid gap-1.5">
               {step.points.map((pt) => (
-                <li key={pt} className="flex items-center gap-2 text-sm text-zinc-700">
+                <li key={pt} className="flex items-center gap-2 text-sm text-stone-700">
                   <CheckCircle2Icon className="size-4 shrink-0 text-[hsl(var(--tenant-primary))]" /> {pt}
                 </li>
               ))}
             </ul>
             <div className="rounded-2xl border border-[hsl(var(--tenant-primary))]/20 bg-white p-3.5">
               <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[hsl(var(--tenant-primary))]"><ZapIcon className="size-3.5" /> Pro tip</div>
-              <p className="mt-1 text-sm text-zinc-600">{step.tip}</p>
+              <p className="mt-1 text-sm text-stone-600">{step.tip}</p>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-end gap-3 border-t border-zinc-200/70 px-6 py-4">
+        <div className="flex items-center justify-end gap-3 border-t border-stone-200/70 px-6 py-4">
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="rounded-xl text-zinc-500" onClick={() => setActive(Math.max(0, active - 1))} disabled={active === 0}>
+            <Button variant="ghost" size="sm" className="rounded-xl text-stone-500" onClick={() => setActive(Math.max(0, active - 1))} disabled={active === 0}>
               <ArrowLeftIcon className="mr-1.5 size-4" /> Back
             </Button>
             {isLast ? (
@@ -331,36 +331,36 @@ function StimulusPanel({ inputKey, title, description, mode, file, textValue, pr
     <div className="grid gap-4 p-5">
       <div className="grid gap-1">
         <div className="flex items-center gap-2">
-          <span className="flex size-7 items-center justify-center rounded-full border border-zinc-200 bg-zinc-50 text-xs font-semibold text-zinc-500">{title.slice(-1)}</span>
+          <span className="flex size-7 items-center justify-center rounded-full border border-stone-200 bg-stone-50 text-xs font-semibold text-stone-500">{title.slice(-1)}</span>
           <h2 className="text-base font-semibold">{title}</h2>
-          {optional && <span className="text-xs text-zinc-500">Optional</span>}
+          {optional && <span className="text-xs text-stone-500">Optional</span>}
         </div>
-        <p className="text-sm text-zinc-600">{description}</p>
+        <p className="text-sm text-stone-600">{description}</p>
       </div>
       
       {mode === "text" ? (
         <Textarea value={textValue} onChange={(e) => onTextChange(e.target.value)} placeholder="Paste your copy here" className="rounded-2xl" />
       ) : (
-        <div className="flex items-center gap-2 rounded-2xl border border-zinc-200 bg-white px-2 py-2">
-          <label className="cursor-pointer rounded-xl border border-zinc-200 bg-zinc-50 px-4 py-2.5 text-sm font-medium">
+        <div className="flex items-center gap-2 rounded-2xl border border-stone-200 bg-white px-2 py-2">
+          <label className="cursor-pointer rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm font-medium">
             Choose file
             <Input key={inputKey} type="file" accept={currentMode.accept} onChange={(e) => onSelect(e.target.files?.[0] || null)} className="sr-only" />
           </label>
-          <div className="truncate text-sm text-zinc-500 flex-1">{file?.name || "No file chosen"}</div>
+          <div className="truncate text-sm text-stone-500 flex-1">{file?.name || "No file chosen"}</div>
         </div>
       )}
 
       {mode === "text" ? (
-        <div className="rounded-2xl border border-zinc-200/70 bg-zinc-50 p-4 min-h-32 text-sm text-zinc-600 line-clamp-6">{textValue || "Preview..."}</div>
+        <div className="rounded-2xl border border-stone-200/70 bg-stone-50 p-4 min-h-32 text-sm text-stone-600 line-clamp-6">{textValue || "Preview..."}</div>
       ) : file ? (
-        <div className="rounded-2xl border border-zinc-200/70 bg-zinc-50 p-3">
-          <div className="flex justify-between text-xs text-zinc-500 mb-2"><span>{file.name}</span><span>{fmtBytes(file.size)}</span></div>
+        <div className="rounded-2xl border border-stone-200/70 bg-stone-50 p-3">
+          <div className="flex justify-between text-xs text-stone-500 mb-2"><span>{file.name}</span><span>{fmtBytes(file.size)}</span></div>
           {file.type.startsWith("image/") && previewUrl && <img src={previewUrl} alt="preview" className="h-40 w-full rounded-xl object-cover" />}
           {file.type.startsWith("video/") && previewUrl && <video src={previewUrl} controls className="h-40 w-full rounded-xl object-cover" />}
           {file.type.startsWith("audio/") && previewUrl && <audio src={previewUrl} controls className="w-full" />}
         </div>
       ) : (
-        <div className="flex items-center justify-center rounded-2xl border border-dashed border-zinc-200 bg-zinc-50 p-4 text-sm text-zinc-500 min-h-32">No file selected</div>
+        <div className="flex items-center justify-center rounded-2xl border border-dashed border-stone-200 bg-stone-50 p-4 text-sm text-stone-500 min-h-32">No file selected</div>
       )}
     </div>
   );
@@ -470,22 +470,22 @@ export default function HomePage() {
   );
 
   return (
-    <main className="bg-background flex h-[100svh] flex-col overflow-hidden text-zinc-950">
+    <main className="bg-background flex h-[100svh] flex-col overflow-hidden text-stone-950">
       <div className="pointer-events-none fixed top-16 right-4 z-40 grid w-[min(360px,calc(100vw-2rem))] gap-2">
         {toasts.map((t) => (
-          <div key={t.id} className="pointer-events-auto rounded-2xl border border-zinc-200 bg-white p-3 shadow-sm">
+          <div key={t.id} className="pointer-events-auto rounded-2xl border border-stone-200 bg-white p-3 shadow-sm">
             <div className="flex justify-between items-start gap-3">
               <div>
-                <div className="text-sm font-semibold text-zinc-950">{t.title}</div>
-                {t.description && <div className="text-xs text-zinc-600 mt-1">{t.description}</div>}
+                <div className="text-sm font-semibold text-stone-950">{t.title}</div>
+                {t.description && <div className="text-xs text-stone-600 mt-1">{t.description}</div>}
               </div>
-              <button onClick={() => setToasts(c => c.filter(x => x.id !== t.id))} className="text-xs text-zinc-500 hover:text-zinc-950">Close</button>
+              <button onClick={() => setToasts(c => c.filter(x => x.id !== t.id))} className="text-xs text-stone-500 hover:text-stone-950">Close</button>
             </div>
           </div>
         ))}
       </div>
 
-      <header className="sticky top-0 z-30 h-14 border-b border-zinc-200/60 bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-30 h-14 border-b border-stone-200/60 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex h-full max-w-[1640px] items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
             <div className="bg-primary flex size-8 items-center justify-center rounded-xl shadow-sm"><CommandIcon className="size-4 text-white" /></div>
@@ -523,25 +523,25 @@ export default function HomePage() {
                   
                   <div className={`grid gap-4 ${result.stimulus_b ? "lg:grid-cols-2" : ""}`}>
                     {[result.stimulus_a, result.stimulus_b].filter(Boolean).map((stim, i) => (
-                      <div key={i} className="rounded-2xl border border-zinc-200/70 bg-zinc-50 p-4">
+                      <div key={i} className="rounded-2xl border border-stone-200/70 bg-stone-50 p-4">
                         <div className="flex justify-between items-start mb-4">
                           <div className="flex items-center gap-3">
                             <StimulusCue label={stim.label} previewUrl={i === 0 ? previewA : previewB} mode={stim.modality} />
                             <div>
-                              <p className="text-xs font-semibold text-zinc-500 uppercase">{versionLabel(stim.label)}</p>
+                              <p className="text-xs font-semibold text-stone-500 uppercase">{versionLabel(stim.label)}</p>
                               <h3 className="text-sm font-semibold">{stim.asset?.name || stim.label}</h3>
                             </div>
                           </div>
                           <div className="text-right">
                             <div className="text-primary text-4xl font-bold tabular-nums">{stim.scorecard?.overall_score}</div>
-                            <div className="text-xs font-medium uppercase tracking-wide text-zinc-500">{stim.scorecard?.overall_band}</div>
+                            <div className="text-xs font-medium uppercase tracking-wide text-stone-500">{stim.scorecard?.overall_band}</div>
                           </div>
                         </div>
-                        <p className="text-sm text-zinc-600 mb-4">{stim.scorecard?.summary}</p>
+                        <p className="text-sm text-stone-600 mb-4">{stim.scorecard?.summary}</p>
                         <div className="grid grid-cols-3 gap-2">
-                          <div className="rounded-xl border bg-white p-2 text-center"><div className="text-xs text-zinc-500">Signal</div><div className="font-semibold text-sm">{stim.scorecard?.dominant_system?.label || "—"}</div></div>
-                          <div className="rounded-xl border bg-white p-2 text-center"><div className="text-xs text-zinc-500">Best Moment</div><div className="font-semibold text-sm">{fmtSec(stim.scorecard?.peak_moment?.at_s)}</div></div>
-                          <div className="rounded-xl border bg-white p-2 text-center"><div className="text-xs text-zinc-500">Pattern Mix</div><div className="font-semibold text-sm">{stim.scorecard?.laterality?.label || "—"}</div></div>
+                          <div className="rounded-xl border bg-white p-2 text-center"><div className="text-xs text-stone-500">Signal</div><div className="font-semibold text-sm">{stim.scorecard?.dominant_system?.label || "—"}</div></div>
+                          <div className="rounded-xl border bg-white p-2 text-center"><div className="text-xs text-stone-500">Best Moment</div><div className="font-semibold text-sm">{fmtSec(stim.scorecard?.peak_moment?.at_s)}</div></div>
+                          <div className="rounded-xl border bg-white p-2 text-center"><div className="text-xs text-stone-500">Pattern Mix</div><div className="font-semibold text-sm">{stim.scorecard?.laterality?.label || "—"}</div></div>
                         </div>
                       </div>
                     ))}
@@ -551,17 +551,17 @@ export default function HomePage() {
                 {result.stimulus_b && comparisonRows.length > 0 && (
                   <Card className="p-5 grid gap-3">
                     <SectionHeader tag="Comparison" title="Where each version leads" />
-                    <div className="overflow-x-auto rounded-2xl border border-zinc-200/70 bg-white text-sm">
+                    <div className="overflow-x-auto rounded-2xl border border-stone-200/70 bg-white text-sm">
                       <div className="min-w-[560px]">
                        {comparisonRows.map((r, i) => (
-                         <div key={i} className="border-b border-zinc-200/60 last:border-b-0">
-                           <div className="grid grid-cols-[220px_1fr_1fr_96px] bg-zinc-50 font-medium">
+                         <div key={i} className="border-b border-stone-200/60 last:border-b-0">
+                           <div className="grid grid-cols-[220px_1fr_1fr_96px] bg-stone-50 font-medium">
                              <div className="p-3">{r.label}</div>
                              <div className={`p-3 ${r.winner === 'A' ? "bg-[hsl(var(--tenant-primary))]/10 text-[hsl(var(--tenant-primary))]" : ""}`}>{r.a}</div>
                              <div className={`p-3 ${r.winner === 'B' ? "bg-[hsl(var(--tenant-primary))]/10 text-[hsl(var(--tenant-primary))]" : ""}`}>{r.b}</div>
                              <div className="p-3 capitalize">{r.winner === "tie" ? "Even" : r.winner}</div>
                            </div>
-                           <div className="p-3 text-xs text-zinc-600 bg-white">{r.insight}</div>
+                           <div className="p-3 text-xs text-stone-600 bg-white">{r.insight}</div>
                          </div>
                        ))}
                       </div>
@@ -581,7 +581,7 @@ export default function HomePage() {
                     <SectionHeader tag="Notes" title="Key Observations" />
                     <div className="grid gap-2 mt-4">
                       {(result.observations || []).map((obs, i) => (
-                        <div key={i} className="flex gap-3 rounded-xl border bg-zinc-50 p-3 text-sm text-zinc-700">
+                        <div key={i} className="flex gap-3 rounded-xl border bg-stone-50 p-3 text-sm text-stone-700">
                           <SparklesIcon className="size-4 text-[hsl(var(--tenant-primary))] shrink-0 mt-0.5" />
                           <p>{obs}</p>
                         </div>
@@ -595,7 +595,7 @@ export default function HomePage() {
                 <div className="grid gap-4">
                   <Card className="p-4 flex flex-wrap gap-3 items-center justify-between">
                     <div>
-                      <div className="text-xs font-semibold uppercase text-zinc-500">Format</div>
+                      <div className="text-xs font-semibold uppercase text-stone-500">Format</div>
                       <div className="text-sm font-medium">Choose content type</div>
                     </div>
                     <div className="flex gap-2">
@@ -609,21 +609,21 @@ export default function HomePage() {
 
                   <Card className="grid lg:grid-cols-[1fr_72px_1fr] overflow-hidden">
                     <StimulusPanel inputKey={inputKey} title="Version A" description="Current version" mode={mode} file={fileA} textValue={textA} previewUrl={previewA} onSelect={setFileA} onTextChange={setTextA} />
-                    <div className="hidden lg:flex items-center justify-center border-x bg-zinc-50">
+                    <div className="hidden lg:flex items-center justify-center border-x bg-stone-50">
                       <span className="bg-primary flex size-10 items-center justify-center rounded-full text-xs font-bold text-white shadow-sm">VS</span>
                     </div>
                     <StimulusPanel inputKey={`${inputKey}-b`} title="Version B" description="Alternative" mode={mode} file={fileB} textValue={textB} previewUrl={previewB} optional onSelect={setFileB} onTextChange={setTextB} />
                   </Card>
                 </div>
 
-                <aside className="fixed inset-x-0 bottom-0 z-20 grid gap-3 border-t bg-white/95 p-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] backdrop-blur-md xl:static xl:h-fit xl:gap-4 xl:rounded-3xl xl:border xl:bg-white xl:p-5">
+                <aside className="fixed inset-x-0 bottom-0 z-20 grid gap-3 border-t bg-white/95 p-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] backdrop-blur-md xl:sticky xl:inset-x-auto xl:bottom-auto xl:h-fit xl:top-5 xl:gap-4 xl:rounded-3xl xl:border xl:bg-white xl:p-5">
                   <div className="hidden xl:block">
                     <SectionHeader tag="Review" title="Ready to analyze" subtitle="Add files and start" />
                   </div>
 
                   <div className="hidden gap-2 text-sm xl:grid">
-                    <div className="flex justify-between p-2 rounded-xl border bg-zinc-50"><span className="flex items-center gap-2">{uploadA ? <CheckCircle2Icon className="size-4 text-[hsl(var(--tenant-primary))]" /> : <CircleDashedIcon className="size-4 text-zinc-400" />} Version A</span></div>
-                    <div className="flex justify-between p-2 rounded-xl border bg-zinc-50"><span className="flex items-center gap-2">{uploadB ? <CheckCircle2Icon className="size-4 text-[hsl(var(--tenant-primary))]" /> : <CircleDashedIcon className="size-4 text-zinc-400" />} Version B</span></div>
+                    <div className="flex justify-between p-2 rounded-xl border bg-stone-50"><span className="flex items-center gap-2">{uploadA ? <CheckCircle2Icon className="size-4 text-[hsl(var(--tenant-primary))]" /> : <CircleDashedIcon className="size-4 text-stone-400" />} Version A</span></div>
+                    <div className="flex justify-between p-2 rounded-xl border bg-stone-50"><span className="flex items-center gap-2">{uploadB ? <CheckCircle2Icon className="size-4 text-[hsl(var(--tenant-primary))]" /> : <CircleDashedIcon className="size-4 text-stone-400" />} Version B</span></div>
                   </div>
 
                   <Button type="submit" disabled={busy || !uploadA} className="bg-primary w-full rounded-2xl text-white shadow-lg hover:opacity-90 disabled:opacity-50">
@@ -632,10 +632,10 @@ export default function HomePage() {
                   </Button>
 
                   {busy && (
-                    <div className="grid gap-3 p-4 rounded-2xl border bg-zinc-50">
+                    <div className="grid gap-3 p-4 rounded-2xl border bg-stone-50">
                       <div className="flex justify-between text-sm font-medium"><span>Progress</span><span>{progress}%</span></div>
                       <Progress value={progress} className="h-2" />
-                      <div className="text-xs text-zinc-500">{PROGRESS_PHASES[activePhase]?.label || "Processing..."}</div>
+                      <div className="text-xs text-stone-500">{PROGRESS_PHASES[activePhase]?.label || "Processing..."}</div>
                     </div>
                   )}
                 </aside>
