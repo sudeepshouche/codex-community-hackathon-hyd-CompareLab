@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "ports": {"preview": 3000, "additional": {}},
+  "scripts": {
+    "setup": {
+      "enabled": true,
+      "command": "python3 -m venv .venv && .venv/bin/pip install --upgrade pip && .venv/bin/pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu && .venv/bin/pip install -e . && cd web && npm install"
+    },
+    "run": {
+      "enabled": true,
+      "command": "TRIBE_FIXTURE_MODE=1 TRIBEV2_PREWARM=0 ./run.sh"
+    },
+    "archive": {"enabled": true, "command": null},
+    "check": {"enabled": true, "command": null}
+  }
+}
