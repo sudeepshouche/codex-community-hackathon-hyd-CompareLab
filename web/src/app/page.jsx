@@ -42,6 +42,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
@@ -197,6 +204,30 @@ function StimulusCue({ label, previewUrl, mode, size = "md" }) {
 }
 
 // ── Components ─────────────────────────────────────────────
+
+function useIsDesktopRail() {
+  // Tips render as a fixed side rail at xl+ and a drawer below that.
+  const [isWide, setIsWide] = useState(null);
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 1280px)");
+    const onChange = () => setIsWide(mql.matches);
+    onChange();
+    mql.addEventListener("change", onChange);
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+  return isWide;
+}
+
+function TipsContent({ onOpenQuickStart }) {
+  return (
+    <div className="grid gap-4">
+      <Card className="p-4 text-sm"><div className="font-semibold mb-1">Read order</div><p className="text-zinc-600">Summary, table, then deeper visuals.</p></Card>
+      <Card className="p-4 text-sm"><div className="font-semibold mb-1">Best use</div><p className="text-zinc-600">Review two versions before you spend more budget.</p></Card>
+      <Card className="p-4 text-sm"><div className="font-semibold mb-1">Fair compare</div><p className="text-zinc-600">Keep both versions in the same format and length range.</p></Card>
+      <Card className="p-4"><Button variant="outline" className="w-full justify-start rounded-xl" onClick={onOpenQuickStart}><InfoIcon className="mr-2 size-4" /> Open quick start</Button></Card>
+    </div>
+  );
+}
 
 function QuickStartDialog({ open, onOpenChange }) {
   const steps = [
@@ -390,8 +421,13 @@ export default function HomePage() {
   const [toasts, setToasts] = useState([]);
   
   const [showQuickStart, setShowQuickStart] = useState(false);
-  const [sideRailOpen, setSideRailOpen] = useState(true);
+  // null = no explicit choice yet: rail defaults open on xl, drawer closed below.
+  const [sideRailOpen, setSideRailOpen] = useState(null);
   const [view, setView] = useState("upload");
+
+  const isDesktopRail = useIsDesktopRail();
+  const railVisible = (sideRailOpen ?? true) && isDesktopRail === true;
+  const tipsSheetOpen = (sideRailOpen ?? false) && isDesktopRail === false;
 
   const previewA = useObjectUrl(fileA);
   const previewB = useObjectUrl(fileB);
@@ -500,17 +536,17 @@ export default function HomePage() {
             <div className="text-sm font-semibold tracking-tight">Compare <span className="gradient-text">Lab</span></div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="rounded-xl" onClick={() => setSideRailOpen(!sideRailOpen)}>
-              {sideRailOpen ? <PanelRightCloseIcon className="mr-2 size-4" /> : <PanelRightOpenIcon className="mr-2 size-4" />} Tips
+            <Button variant="outline" size="sm" className="rounded-xl" onClick={() => setSideRailOpen(!(sideRailOpen ?? true))}>
+              {(sideRailOpen ?? true) ? <PanelRightCloseIcon className="mr-2 size-4" /> : <PanelRightOpenIcon className="mr-2 size-4" />} Tips
             </Button>
-            <Button variant="outline" size="sm" className="rounded-xl" onClick={() => setShowQuickStart(true)}>
-              <InfoIcon className="mr-2 size-4" /> Quick start
+            <Button variant="outline" size="sm" className="rounded-xl" aria-label="Quick start" onClick={() => setShowQuickStart(true)}>
+              <InfoIcon className="size-4 sm:mr-2" /><span className="hidden sm:inline">Quick start</span>
             </Button>
           </div>
         </div>
       </header>
 
-      <div className={`mx-auto grid h-[calc(100svh-3.5rem)] w-full max-w-[1640px] grid-cols-1 overflow-hidden ${sideRailOpen ? "xl:grid-cols-[minmax(0,1fr)_360px]" : ""}`}>
+      <div className={`mx-auto grid h-[calc(100svh-3.5rem)] w-full max-w-[1640px] grid-cols-1 overflow-hidden ${railVisible ? "xl:grid-cols-[minmax(0,1fr)_360px]" : ""}`}>
         <section className="overflow-y-auto px-4 py-5 sm:px-6">
           <div className="mx-auto flex w-full max-w-6xl flex-col gap-5">
             <Card className="px-5 py-5">
@@ -651,17 +687,27 @@ export default function HomePage() {
           </div>
         </section>
 
-        {sideRailOpen && (
+        {railVisible && (
           <aside className="hidden border-l bg-zinc-50/70 p-5 xl:block overflow-y-auto">
             <SectionHeader tag="Tips" title="How to use this page" />
-            <div className="mt-5 grid gap-4">
-              <Card className="p-4 text-sm"><div className="font-semibold mb-1">Read order</div><p className="text-zinc-600">Summary, table, then deeper visuals.</p></Card>
-              <Card className="p-4 text-sm"><div className="font-semibold mb-1">Best use</div><p className="text-zinc-600">Review two versions before you spend more budget.</p></Card>
-              <Card className="p-4"><Button variant="outline" className="w-full justify-start rounded-xl" onClick={() => setShowQuickStart(true)}><InfoIcon className="mr-2 size-4" /> Open quick start</Button></Card>
+            <div className="mt-5">
+              <TipsContent onOpenQuickStart={() => setShowQuickStart(true)} />
             </div>
           </aside>
         )}
       </div>
+
+      <Sheet open={tipsSheetOpen} onOpenChange={(o) => setSideRailOpen(o)}>
+        <SheetContent side="right" className="w-[300px] gap-4 border-l bg-zinc-50 sm:max-w-[300px]">
+          <SheetHeader className="text-left">
+            <SheetTitle className="text-sm font-semibold">How to use this page</SheetTitle>
+            <SheetDescription>Quick tips for comparing versions.</SheetDescription>
+          </SheetHeader>
+          <div className="overflow-y-auto pb-4">
+            <TipsContent onOpenQuickStart={() => { setSideRailOpen(false); setShowQuickStart(true); }} />
+          </div>
+        </SheetContent>
+      </Sheet>
       <QuickStartDialog open={showQuickStart} onOpenChange={setShowQuickStart} />
     </main>
   );
