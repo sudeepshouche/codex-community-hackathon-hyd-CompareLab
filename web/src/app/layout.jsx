@@ -2,8 +2,14 @@ import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
 export const metadata = {
-  title: "TRIBE Compare Lab",
-  description: "Structured side-by-side video comparison using TRIBE-derived response curves.",
+  title: "Compare Lab — Open Source A/B Testing",
+  description: "Open source A/B testing: upload two versions, compare response curves, and log views and subscriptions to learn what holds.",
+};
+
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }) {
