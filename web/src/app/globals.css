@@ -45,7 +45,7 @@
     --ring: 152 16% 30%;
     --input: 40 12% 89%;
     --tenant-primary: 152 16% 36%;
-    --radius: 0.625rem;
+    --radius: 0.5rem;
   }
 
   * {
@@ -61,7 +61,11 @@
   body {
     margin: 0;
     min-height: 100vh;
-    background: hsl(var(--background));
+    background-color: hsl(var(--background));
+    background-image:
+      radial-gradient(56rem 22rem at 50% -10rem, rgb(21 88 62 / 0.09), transparent 70%),
+      radial-gradient(rgb(24 24 27 / 0.045) 1px, transparent 1.2px);
+    background-size: auto, 22px 22px;
     color: hsl(var(--foreground));
     font-family: inherit;
     -webkit-font-smoothing: antialiased;
@@ -110,5 +114,26 @@
 @media (prefers-reduced-motion: reduce) {
   .qs-enter {
     animation: none;
+  }
+}
+
+@layer utilities {
+  /* Raised surface: cards, shells, sticky panels */
+  .shadow-surface {
+    box-shadow:
+      0 1px 2px rgb(24 24 27 / 0.05),
+      0 16px 40px -24px rgb(24 24 27 / 0.25);
+  }
+  /* Floating overlay: dialogs, toasts */
+  .shadow-pop {
+    box-shadow:
+      0 2px 6px rgb(24 24 27 / 0.08),
+      0 32px 64px -24px rgb(24 24 27 / 0.35);
+  }
+  /* Crisp primary-button edge with top highlight */
+  .shadow-crisp {
+    box-shadow:
+      0 1px 2px rgb(24 24 27 / 0.28),
+      inset 0 1px 0 rgb(255 255 255 / 0.22);
   }
 }

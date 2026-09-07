@@ -24,7 +24,7 @@ import {
 
 const ResultsChart = dynamic(() => import("./results-chart"), {
   ssr: false,
-  loading: () => <div className="h-full w-full animate-pulse rounded-xl bg-stone-100" />,
+  loading: () => <div className="h-full w-full animate-pulse rounded-lg bg-stone-100" />,
 });
 
 import { Button } from "@/components/ui/button";
@@ -164,7 +164,7 @@ function useObjectUrl(file) {
 // ── Shared UI Atoms ────────────────────────────────────────
 
 const Card = ({ className = "", children, ...props }) => (
-  <section className={`rounded-3xl border border-stone-200/70 bg-white ${className}`} {...props}>{children}</section>
+  <section className={`rounded-lg border border-stone-200/70 bg-white shadow-surface ${className}`} {...props}>{children}</section>
 );
 
 const SectionHeader = ({ tag, title, subtitle }) => (
@@ -178,7 +178,7 @@ const SectionHeader = ({ tag, title, subtitle }) => (
 function StimulusCue({ label, previewUrl, mode, size = "md" }) {
   const showPreview = Boolean(previewUrl) && mode !== "audio" && mode !== "text";
   const initial = versionLabel(label, "Version").trim().charAt(0).toUpperCase() || "?";
-  const classes = size === "sm" ? "size-8 rounded-lg" : "size-12 rounded-xl";
+  const classes = size === "sm" ? "size-8 rounded-lg" : "size-12 rounded-lg";
 
   return showPreview ? (
     <div className={`${classes} overflow-hidden border border-stone-200/70 bg-[hsl(var(--tenant-primary))]/10`}>
@@ -252,11 +252,11 @@ function QuickStartDialog({ open, onOpenChange }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[92svh] overflow-y-auto rounded-[28px] border-stone-200/80 bg-white p-0 sm:max-w-3xl">
+      <DialogContent className="max-h-[92svh] overflow-y-auto rounded-lg border-stone-200/80 bg-white p-0 shadow-pop sm:max-w-3xl">
         <DialogHeader className="bg-primary relative border-0 px-6 py-6 text-left">
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(40rem_12rem_at_80%_-20%,rgba(255,255,255,0.35),transparent_60%)]" aria-hidden />
           <div className="relative flex items-center gap-3">
-            <div className="flex size-11 items-center justify-center rounded-2xl bg-white/15 backdrop-blur"><SparklesIcon className="size-5 text-white" /></div>
+            <div className="flex size-11 items-center justify-center rounded-lg bg-white/15 backdrop-blur"><SparklesIcon className="size-5 text-white" /></div>
             <div className="grid gap-0.5">
               <DialogTitle className="text-lg font-semibold text-white">Welcome to Compare Lab</DialogTitle>
               <DialogDescription className="text-sm text-white/80">Four steps from upload to a confident call.</DialogDescription>
@@ -271,7 +271,7 @@ function QuickStartDialog({ open, onOpenChange }) {
             {steps.map((s, i) => {
               const done = i < active;
               return (
-                <button key={i} type="button" onClick={() => setActive(i)} className={`relative flex items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition-all ${active === i ? "border-transparent bg-[hsl(var(--tenant-primary))]/[0.07] shadow-sm ring-1 ring-[hsl(var(--tenant-primary))]/35" : "border-transparent hover:bg-stone-50"}`}>
+                <button key={i} type="button" onClick={() => setActive(i)} className={`relative flex items-center gap-3 rounded-lg border px-3.5 py-3 text-left transition-all ${active === i ? "border-transparent bg-[hsl(var(--tenant-primary))]/[0.07] shadow-sm ring-1 ring-[hsl(var(--tenant-primary))]/35" : "border-transparent hover:bg-stone-50"}`}>
                   <span className={`z-10 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${active === i ? "bg-primary text-white" : done ? "bg-[hsl(var(--tenant-primary))]/15 text-[hsl(var(--tenant-primary))]" : "border border-stone-200 bg-white text-stone-400"}`}>
                     {done ? <CheckIcon className="size-3.5" /> : i + 1}
                   </span>
@@ -281,7 +281,7 @@ function QuickStartDialog({ open, onOpenChange }) {
             })}
           </div>
 
-          <div key={active} className="qs-enter grid content-start gap-4 rounded-2xl border border-stone-200/70 bg-stone-50/60 p-5">
+          <div key={active} className="qs-enter grid content-start gap-4 rounded-lg border border-stone-200/70 bg-stone-50/60 p-5">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[hsl(var(--tenant-primary))]">{step.eyebrow}</p>
               <h3 className="mt-1 text-xl font-semibold tracking-tight text-stone-950">{step.headline}</h3>
@@ -294,7 +294,7 @@ function QuickStartDialog({ open, onOpenChange }) {
                 </li>
               ))}
             </ul>
-            <div className="rounded-2xl border border-[hsl(var(--tenant-primary))]/20 bg-white p-3.5">
+            <div className="rounded-lg border border-[hsl(var(--tenant-primary))]/20 bg-white p-3.5">
               <div className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-[hsl(var(--tenant-primary))]"><ZapIcon className="size-3.5" /> Pro tip</div>
               <p className="mt-1 text-sm text-stone-600">{step.tip}</p>
             </div>
@@ -303,15 +303,15 @@ function QuickStartDialog({ open, onOpenChange }) {
 
         <div className="flex items-center justify-end gap-3 border-t border-stone-200/70 px-6 py-4">
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm" className="rounded-xl text-stone-500" onClick={() => setActive(Math.max(0, active - 1))} disabled={active === 0}>
+            <Button variant="ghost" size="sm" className="rounded-lg text-stone-500" onClick={() => setActive(Math.max(0, active - 1))} disabled={active === 0}>
               <ArrowLeftIcon className="mr-1.5 size-4" /> Back
             </Button>
             {isLast ? (
-              <Button size="sm" className="bg-primary rounded-xl text-white shadow-md hover:opacity-90" onClick={() => onOpenChange(false)}>
+              <Button size="sm" className="bg-primary rounded-lg text-white shadow-crisp hover:-translate-y-px hover:opacity-90" onClick={() => onOpenChange(false)}>
                 Start comparing <ArrowRightIcon className="ml-1.5 size-4" />
               </Button>
             ) : (
-              <Button size="sm" className="bg-primary rounded-xl text-white shadow-md hover:opacity-90" onClick={() => setActive(Math.min(steps.length - 1, active + 1))}>
+              <Button size="sm" className="bg-primary rounded-lg text-white shadow-crisp hover:-translate-y-px hover:opacity-90" onClick={() => setActive(Math.min(steps.length - 1, active + 1))}>
                 Next <ArrowRightIcon className="ml-1.5 size-4" />
               </Button>
             )}
@@ -336,10 +336,10 @@ function StimulusPanel({ title, description, mode, file, textValue, previewUrl, 
       </div>
       
       {mode === "text" ? (
-        <Textarea value={textValue} onChange={(e) => onTextChange(e.target.value)} placeholder="Paste your copy here" className="rounded-2xl" />
+        <Textarea value={textValue} onChange={(e) => onTextChange(e.target.value)} placeholder="Paste your copy here" className="rounded-lg" />
       ) : (
-        <div className="flex items-center gap-2 rounded-2xl border border-stone-200 bg-white px-2 py-2">
-          <label className="cursor-pointer rounded-xl border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm font-medium">
+        <div className="flex items-center gap-2 rounded-lg border border-stone-200 bg-white px-2 py-2">
+          <label className="cursor-pointer rounded-lg border border-stone-200 bg-stone-50 px-4 py-2.5 text-sm font-medium">
             Choose file
             <input data-testid={testId} type="file" accept={currentMode.accept} onChange={(e) => onSelect(e.target.files?.[0] || null)} onInput={(e) => onSelect(e.currentTarget.files?.[0] || null)} className="sr-only" />
           </label>
@@ -348,16 +348,16 @@ function StimulusPanel({ title, description, mode, file, textValue, previewUrl, 
       )}
 
       {mode === "text" ? (
-        <div className="rounded-2xl border border-stone-200/70 bg-stone-50 p-4 min-h-32 text-sm text-stone-600 line-clamp-6">{textValue || "Preview..."}</div>
+        <div className="rounded-lg border border-stone-200/70 bg-stone-50 p-4 min-h-32 text-sm text-stone-600 line-clamp-6">{textValue || "Preview..."}</div>
       ) : file ? (
-        <div className="rounded-2xl border border-stone-200/70 bg-stone-50 p-3">
+        <div className="rounded-lg border border-stone-200/70 bg-stone-50 p-3">
           <div className="flex justify-between text-xs text-stone-500 mb-2"><span>{file.name}</span><span>{fmtBytes(file.size)}</span></div>
-          {file.type.startsWith("image/") && previewUrl && <img src={previewUrl} alt="preview" className="h-40 w-full rounded-xl object-cover" />}
-          {file.type.startsWith("video/") && previewUrl && <video src={previewUrl} controls className="h-40 w-full rounded-xl object-cover" />}
+          {file.type.startsWith("image/") && previewUrl && <img src={previewUrl} alt="preview" className="h-40 w-full rounded-lg object-cover" />}
+          {file.type.startsWith("video/") && previewUrl && <video src={previewUrl} controls className="h-40 w-full rounded-lg object-cover" />}
           {file.type.startsWith("audio/") && previewUrl && <audio src={previewUrl} controls className="w-full" />}
         </div>
       ) : (
-        <div className="flex items-center justify-center rounded-2xl border border-dashed border-stone-200 bg-stone-50 p-4 text-sm text-stone-500 min-h-32">No file selected</div>
+        <div className="flex items-center justify-center rounded-lg border border-dashed border-stone-200 bg-stone-50 p-4 text-sm text-stone-500 min-h-32">No file selected</div>
       )}
     </div>
   );
@@ -491,7 +491,7 @@ export default function HomePage() {
     <main className="bg-background flex h-[100svh] flex-col overflow-hidden text-stone-950">
       <div className="pointer-events-none fixed top-16 right-4 z-40 grid w-[min(360px,calc(100vw-2rem))] gap-2">
         {toasts.map((t) => (
-          <div key={t.id} className="pointer-events-auto rounded-2xl border border-stone-200 bg-white p-3 shadow-sm">
+          <div key={t.id} className="pointer-events-auto rounded-lg border border-stone-200 bg-white p-3 shadow-pop">
             <div className="flex justify-between items-start gap-3">
               <div>
                 <div className="text-sm font-semibold text-stone-950">{t.title}</div>
@@ -506,11 +506,11 @@ export default function HomePage() {
       <header className="sticky top-0 z-30 h-14 border-b border-stone-200/60 bg-white/80 backdrop-blur-md">
         <div className="mx-auto flex h-full max-w-[1640px] items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3">
-            <div className="bg-primary flex size-8 items-center justify-center rounded-xl shadow-sm"><CommandIcon className="size-4 text-white" /></div>
+            <div className="bg-primary flex size-8 items-center justify-center rounded-lg shadow-sm"><CommandIcon className="size-4 text-white" /></div>
             <div className="text-sm font-semibold tracking-tight">Compare <span className="text-primary">Lab</span> <span className="ml-1 rounded-full border border-stone-200 bg-stone-50 px-2 py-0.5 text-[11px] font-medium text-stone-500">Open source A/B testing</span></div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="rounded-xl" aria-label="Quick start" onClick={() => setShowQuickStart(true)}>
+            <Button variant="outline" size="sm" className="rounded-lg" aria-label="Quick start" onClick={() => setShowQuickStart(true)}>
               <InfoIcon className="size-4 sm:mr-2" /><span className="hidden sm:inline">Quick start</span>
             </Button>
           </div>
@@ -525,11 +525,11 @@ export default function HomePage() {
                 <SectionHeader tag="Workspace" title="A/B test two versions" subtitle="Upload two versions, compare the response, then log views and subscriptions to mine what holds." />
                 <div className="flex items-center gap-2">
                   {result && (
-                    <Button variant="outline" size="sm" className="rounded-xl" onClick={() => setView(view === "result" ? "upload" : "result")}>
+                    <Button variant="outline" size="sm" className="rounded-lg" onClick={() => setView(view === "result" ? "upload" : "result")}>
                       {view === "result" ? "Back to files" : "Open results"}
                     </Button>
                   )}
-                  <Button variant="ghost" size="sm" className="rounded-xl" onClick={resetForm} disabled={busy}>Clear</Button>
+                  <Button variant="ghost" size="sm" className="rounded-lg" onClick={resetForm} disabled={busy}>Clear</Button>
                 </div>
               </div>
             </Card>
@@ -541,7 +541,7 @@ export default function HomePage() {
                   
                   <div className={`grid gap-4 ${result.stimulus_b ? "lg:grid-cols-2" : ""}`}>
                     {[result.stimulus_a, result.stimulus_b].filter(Boolean).map((stim, i) => (
-                      <div key={i} className="rounded-2xl border border-stone-200/70 bg-stone-50 p-4">
+                      <div key={i} className="rounded-lg border border-stone-200/70 bg-stone-50 p-4">
                         <div className="flex justify-between items-start mb-4">
                           <div className="flex items-center gap-3">
                             <StimulusCue label={stim.label} previewUrl={i === 0 ? previewA : previewB} mode={stim.modality} />
@@ -564,7 +564,7 @@ export default function HomePage() {
                 {result.stimulus_b && comparisonRows.length > 0 && (
                   <Card className="p-5 grid gap-3">
                     <SectionHeader tag="Comparison" title="Where each version leads" />
-                    <div className="overflow-x-auto rounded-2xl border border-stone-200/70 bg-white text-sm">
+                    <div className="overflow-x-auto rounded-lg border border-stone-200/70 bg-white text-sm">
                       <div className="min-w-[560px]">
                        {comparisonRows.map((r, i) => (
                          <div key={i} className="border-b border-stone-200/60 last:border-b-0">
@@ -593,7 +593,7 @@ export default function HomePage() {
                   <Card className="p-5">
                     <SectionHeader tag="Outcomes" title="Views & subscriptions" subtitle="Log what happened after publishing — the model cannot see this. Logged outcomes outrank model scores." />
                     <div className="grid gap-3 mt-4 sm:grid-cols-2">
-                      <div className="grid gap-2 rounded-2xl border border-stone-200/70 bg-stone-50 p-4">
+                      <div className="grid gap-2 rounded-lg border border-stone-200/70 bg-stone-50 p-4">
                         <div className="text-xs font-semibold uppercase tracking-wide text-stone-500">Version A outcomes</div>
                         <div className="grid grid-cols-2 gap-2">
                           <div className="grid gap-1"><Label htmlFor="views-a">Views</Label><Input id="views-a" inputMode="numeric" placeholder="e.g. 12500" value={viewsA} onChange={(e) => setViewsA(e.target.value.replace(/[^0-9]/g, ""))} /></div>
@@ -605,7 +605,7 @@ export default function HomePage() {
                           <p className="text-xs text-stone-600">A converts {rateA.toFixed(2)}% of views to subscriptions.</p>
                         )}
                       </div>
-                      <div className="grid gap-2 rounded-2xl border border-stone-200/70 bg-stone-50 p-4">
+                      <div className="grid gap-2 rounded-lg border border-stone-200/70 bg-stone-50 p-4">
                         <div className="text-xs font-semibold uppercase tracking-wide text-stone-500">Version B outcomes</div>
                         <div className="grid grid-cols-2 gap-2">
                           <div className="grid gap-1"><Label htmlFor="views-b">Views</Label><Input id="views-b" inputMode="numeric" placeholder="e.g. 14800" value={viewsB} onChange={(e) => setViewsB(e.target.value.replace(/[^0-9]/g, ""))} /></div>
@@ -621,7 +621,7 @@ export default function HomePage() {
                       </div>
                     </div>
                     {result.stimulus_b && outcome && (
-                      <p className="mt-3 rounded-xl border border-stone-200/70 bg-white p-3 text-sm text-stone-700">
+                      <p className="mt-3 rounded-lg border border-stone-200/70 bg-white p-3 text-sm text-stone-700">
                         {outcome.winner === "tie"
                           ? "Logged outcomes are tied on view-to-subscription rate."
                           : `Version ${outcome.winner} leads your logged outcomes by ${outcome.gapPct.toFixed(1)}% on view-to-subscription rate.`}{" "}
@@ -635,7 +635,7 @@ export default function HomePage() {
                   <SectionHeader tag="Notes" title="Key Observations" />
                   <div className="grid gap-2 mt-4">
                     {(result.observations || []).map((obs, i) => (
-                      <div key={i} className="flex gap-3 rounded-xl border bg-stone-50 p-3 text-sm text-stone-700">
+                      <div key={i} className="flex gap-3 rounded-lg border bg-stone-50 p-3 text-sm text-stone-700">
                         <SparklesIcon className="size-4 text-[hsl(var(--tenant-primary))] shrink-0 mt-0.5" />
                         <p>{obs}</p>
                       </div>
@@ -669,23 +669,23 @@ export default function HomePage() {
                   </Card>
                 </div>
 
-                <aside className="fixed inset-x-0 bottom-0 z-20 grid gap-3 border-t bg-white/95 p-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] backdrop-blur-md xl:sticky xl:inset-x-auto xl:bottom-auto xl:h-fit xl:top-5 xl:gap-4 xl:rounded-3xl xl:border xl:bg-white xl:p-5">
+                <aside className="fixed inset-x-0 bottom-0 z-20 grid gap-3 border-t bg-white/95 p-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] backdrop-blur-md xl:sticky xl:inset-x-auto xl:bottom-auto xl:h-fit xl:top-5 xl:gap-4 xl:rounded-lg xl:border xl:bg-white xl:p-5 xl:shadow-surface">
                   <div className="hidden xl:block">
                     <SectionHeader tag="Review" title="Run the A/B test" subtitle="Add both versions, then mine views and subscriptions" />
                   </div>
 
                   <div className="hidden gap-2 text-sm xl:grid">
-                    <div className="flex justify-between p-2 rounded-xl border bg-stone-50"><span className="flex items-center gap-2">{uploadA ? <CheckCircle2Icon className="size-4 text-[hsl(var(--tenant-primary))]" /> : <CircleDashedIcon className="size-4 text-stone-400" />} Version A</span></div>
-                    <div className="flex justify-between p-2 rounded-xl border bg-stone-50"><span className="flex items-center gap-2">{uploadB ? <CheckCircle2Icon className="size-4 text-[hsl(var(--tenant-primary))]" /> : <CircleDashedIcon className="size-4 text-stone-400" />} Version B</span></div>
+                    <div className="flex justify-between p-2 rounded-lg border bg-stone-50"><span className="flex items-center gap-2">{uploadA ? <CheckCircle2Icon className="size-4 text-[hsl(var(--tenant-primary))]" /> : <CircleDashedIcon className="size-4 text-stone-400" />} Version A</span></div>
+                    <div className="flex justify-between p-2 rounded-lg border bg-stone-50"><span className="flex items-center gap-2">{uploadB ? <CheckCircle2Icon className="size-4 text-[hsl(var(--tenant-primary))]" /> : <CircleDashedIcon className="size-4 text-stone-400" />} Version B</span></div>
                   </div>
 
-                  <Button type="submit" disabled={busy || !uploadA} className="bg-primary w-full rounded-2xl text-white shadow-lg hover:opacity-90 disabled:opacity-50">
+                  <Button type="submit" disabled={busy || !uploadA} className="bg-primary w-full rounded-lg text-white shadow-crisp hover:-translate-y-px hover:opacity-90 disabled:opacity-50 disabled:hover:translate-y-0">
                     {busy ? <LoaderCircleIcon className="mr-2 size-4 animate-spin" /> : <PlayIcon className="mr-2 size-4" />}
                     {uploadB ? "Run A/B test" : "Review version"}
                   </Button>
 
                   {busy && (
-                    <div className="grid gap-3 p-4 rounded-2xl border bg-stone-50">
+                    <div className="grid gap-3 p-4 rounded-lg border bg-stone-50">
                       <div className="flex justify-between text-sm font-medium"><span>Progress</span><span>{progress}%</span></div>
                       <Progress value={progress} className="h-2" />
                       <div className="text-xs text-stone-500">{PROGRESS_PHASES[activePhase]?.label || "Processing..."}</div>
