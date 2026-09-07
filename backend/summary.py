@@ -1,4 +1,9 @@
-"""Compact TRIBE result shaping for the compare lab UI."""
+"""Compact TRIBE result shaping for the compare lab UI.
+
+Honest structural read only: every number derives from the model response
+curve (mean absolute activation per segment). No invented engagement
+systems, grades, hemispheric claims, or schematic brain views.
+"""
 
 from __future__ import annotations
 
@@ -22,63 +27,6 @@ DISPLAY_METRICS = (
 DISCLAIMER = (
     "Descriptive TRIBE-based comparison only. Not a predictor of virality, CTR, ROAS, "
     "sales, or measured cognition."
-)
-SYSTEM_DEFINITIONS = (
-    {
-        "key": "visual_pull",
-        "label": "Visual pull",
-        "category": "Visual Processing",
-        "start": 0.00,
-        "end": 0.15,
-        "weight": 0.22,
-        "description": "How much the visual layer carries the response.",
-        "high_text": "The visual layer is doing real work through motion, framing, contrast, or faces.",
-        "low_text": "The visual layer is present, but it is not carrying much of the response yet.",
-    },
-    {
-        "key": "voice_meaning",
-        "label": "Voice & meaning",
-        "category": "Auditory & Language",
-        "start": 0.15,
-        "end": 0.35,
-        "weight": 0.21,
-        "description": "How strongly words, narration, or audio cues are landing.",
-        "high_text": "Speech, wording, or audio cues are contributing clear signal.",
-        "low_text": "The response is not being driven much by words, narration, or sound.",
-    },
-    {
-        "key": "focus_retention",
-        "label": "Focus retention",
-        "category": "Attention & Spatial",
-        "start": 0.35,
-        "end": 0.55,
-        "weight": 0.22,
-        "description": "How well the creative keeps attention organized and on-track.",
-        "high_text": "The piece keeps attention locked and spatially organized.",
-        "low_text": "Attention is active, but the hold is lighter and easier to lose.",
-    },
-    {
-        "key": "thinking_load",
-        "label": "Thinking load",
-        "category": "Executive & Motor",
-        "start": 0.55,
-        "end": 0.80,
-        "weight": 0.17,
-        "description": "How much the content triggers active thinking and mental effort.",
-        "high_text": "The viewer is doing more active processing rather than passively consuming.",
-        "low_text": "The content is being taken in more passively than analytically.",
-    },
-    {
-        "key": "emotion_intent",
-        "label": "Emotion & intent",
-        "category": "Emotion & Decision",
-        "start": 0.80,
-        "end": 1.00,
-        "weight": 0.18,
-        "description": "How much the content taps emotion, reward, and action readiness.",
-        "high_text": "The response has more emotional and action-oriented weight.",
-        "low_text": "The response is lighter on emotion and action-readiness than the stronger systems.",
-    },
 )
 FRIENDLY_METRIC_LABELS = {
     "Opening": {
@@ -106,252 +54,18 @@ FRIENDLY_METRIC_LABELS = {
         "description": "How even the response feels from moment to moment.",
     },
 }
-BRAIN_VIEW_TEMPLATES = (
-    {
-        "key": "left",
-        "label": "Left hemisphere",
-        "description": "Language, sequencing, and analytical load.",
-        "hotspots": (
-            {"system_key": "voice_meaning", "label": "Voice & meaning", "x": 38, "y": 34, "r": 14},
-            {"system_key": "thinking_load", "label": "Thinking load", "x": 57, "y": 22, "r": 12},
-            {"system_key": "focus_retention", "label": "Focus retention", "x": 54, "y": 48, "r": 10},
-        ),
-    },
-    {
-        "key": "right",
-        "label": "Right hemisphere",
-        "description": "Emotion, imagery, and spatial awareness.",
-        "hotspots": (
-            {"system_key": "visual_pull", "label": "Visual pull", "x": 37, "y": 28, "r": 14},
-            {"system_key": "emotion_intent", "label": "Emotion & intent", "x": 57, "y": 24, "r": 12},
-            {"system_key": "focus_retention", "label": "Focus retention", "x": 53, "y": 47, "r": 10},
-        ),
-    },
-    {
-        "key": "dorsal",
-        "label": "Top-down view",
-        "description": "Focus, pacing, and coordination.",
-        "hotspots": (
-            {"system_key": "focus_retention", "label": "Focus retention", "x": 50, "y": 22, "r": 14},
-            {"system_key": "thinking_load", "label": "Thinking load", "x": 34, "y": 42, "r": 12},
-            {"system_key": "visual_pull", "label": "Visual pull", "x": 66, "y": 42, "r": 12},
-        ),
-    },
-    {
-        "key": "anterior",
-        "label": "Front view",
-        "description": "Decision, reward, and social appraisal.",
-        "hotspots": (
-            {"system_key": "emotion_intent", "label": "Emotion & intent", "x": 50, "y": 20, "r": 14},
-            {"system_key": "voice_meaning", "label": "Voice & meaning", "x": 36, "y": 44, "r": 11},
-            {"system_key": "thinking_load", "label": "Thinking load", "x": 64, "y": 44, "r": 11},
-        ),
-    },
-)
 
 
 def _safe_float(value: tp.Any) -> float:
     return float(np.asarray(value).item())
 
 
-def _clamp_score(value: float) -> int:
-    return int(round(min(100.0, max(0.0, value))))
-
-
-def _grade(score: float) -> str:
-    if score >= 90:
-        return "A+"
-    if score >= 85:
-        return "A"
-    if score >= 80:
-        return "A-"
-    if score >= 75:
-        return "B+"
-    if score >= 70:
-        return "B"
-    if score >= 65:
-        return "B-"
-    if score >= 60:
-        return "C+"
-    if score >= 55:
-        return "C"
-    if score >= 50:
-        return "C-"
-    if score >= 40:
-        return "D"
-    return "F"
-
-
-def _score_band(score: int) -> str:
-    if score >= 82:
-        return "Very strong"
-    if score >= 68:
-        return "Strong"
-    if score >= 54:
-        return "Moderate"
-    if score >= 40:
-        return "Light"
-    return "Weak"
-
-
-def _score_band_summary(score: int) -> str:
-    band = _score_band(score)
-    if band == "Very strong":
-        return "The response is clearly above the rest of the profile."
-    if band == "Strong":
-        return "This system is contributing meaningful signal."
-    if band == "Moderate":
-        return "This system is present, but it is not the main driver."
-    if band == "Light":
-        return "This system is showing only a lighter signal."
-    return "This system is the least active part of the profile."
-
-
-def _paired_vertex_indices(
-    start_ratio: float,
-    end_ratio: float,
-    *,
-    n_vertices: int,
-) -> np.ndarray:
-    if n_vertices <= 0:
-        return np.asarray([], dtype=int)
-    half = max(n_vertices // 2, 1)
-    left_start = min(int(half * start_ratio), half)
-    left_end = max(left_start + 1, min(int(math.ceil(half * end_ratio)), half))
-    left = np.arange(left_start, left_end, dtype=int)
-    right = np.arange(half + left_start, min(half + left_end, n_vertices), dtype=int)
-    if right.size == 0:
-        return left
-    return np.concatenate([left, right])
-
-
-def _system_score_rows(preds: np.ndarray) -> tuple[list[dict[str, tp.Any]], dict[str, tp.Any]]:
-    avg_activation = np.mean(np.abs(preds), axis=0)
-    global_mean = float(avg_activation.mean()) if avg_activation.size else 0.0
-    n_vertices = int(avg_activation.size)
-    half = max(n_vertices // 2, 1)
-    left_activation = float(avg_activation[:half].mean()) if half else 0.0
-    right_activation = float(avg_activation[half:].mean()) if n_vertices > half else left_activation
-    peaks: list[float] = []
-    activations: list[float] = []
-    rows: list[dict[str, tp.Any]] = []
-    for definition in SYSTEM_DEFINITIONS:
-        indices = _paired_vertex_indices(
-            definition["start"],
-            definition["end"],
-            n_vertices=n_vertices,
-        )
-        values = avg_activation[indices] if indices.size else np.asarray([0.0], dtype=float)
-        activation = float(values.mean())
-        peak = float(values.max())
-        peaks.append(peak)
-        activations.append(activation)
-        rows.append(
-            {
-                "key": definition["key"],
-                "label": definition["label"],
-                "category": definition["category"],
-                "description": definition["description"],
-                "activation": activation,
-                "peak": peak,
-                "weight": definition["weight"],
-                "high_text": definition["high_text"],
-                "low_text": definition["low_text"],
-            }
-        )
-
-    max_peak = max(peaks) if peaks else 0.0
-    for row in rows:
-        normalized_mean = (row["activation"] / max(global_mean, CONSISTENCY_EPSILON)) * 50.0
-        normalized_peak = (row["peak"] / max(max_peak, CONSISTENCY_EPSILON)) * 100.0
-        score = _clamp_score(normalized_mean * 0.4 + normalized_peak * 0.6)
-        row["score"] = score
-        row["grade"] = _grade(score)
-        row["band"] = _score_band(score)
-        row["readout"] = row["high_text"] if score >= 60 else row["low_text"]
-
-    laterality_index = (left_activation - right_activation) / (
-        abs(left_activation) + abs(right_activation) + CONSISTENCY_EPSILON
-    )
-    total_lateral = max(left_activation + right_activation, CONSISTENCY_EPSILON)
-    left_share = round((left_activation / total_lateral) * 100.0, 1)
-    right_share = round((right_activation / total_lateral) * 100.0, 1)
-    if laterality_index > 0.05:
-        laterality_label = "Left-leaning"
-        laterality_text = "More of the response leans toward language and analytical processing."
-    elif laterality_index < -0.05:
-        laterality_label = "Right-leaning"
-        laterality_text = "More of the response leans toward imagery, emotion, and spatial processing."
-    else:
-        laterality_label = "Balanced"
-        laterality_text = "The response is balanced between analytical and emotional/spatial processing."
-
-    return rows, {
-        "left_share_pct": left_share,
-        "right_share_pct": right_share,
-        "laterality_index": round(laterality_index, 3),
-        "label": laterality_label,
-        "text": laterality_text,
-    }
-
-
-def _build_brain_views(
-    systems: list[dict[str, tp.Any]],
-    *,
-    laterality_index: float,
-) -> list[dict[str, tp.Any]]:
-    system_scores = {system["key"]: float(system["score"]) for system in systems}
-    left_bias = 1.0 + max(laterality_index, 0.0) * 1.2
-    right_bias = 1.0 + max(-laterality_index, 0.0) * 1.2
-    views = []
-    for template in BRAIN_VIEW_TEMPLATES:
-        hotspots = []
-        for hotspot in template["hotspots"]:
-            system_score = system_scores.get(hotspot["system_key"], 50.0)
-            bias = 1.0
-            if template["key"] == "left":
-                bias = left_bias
-            elif template["key"] == "right":
-                bias = right_bias
-            intensity = min(1.0, max(0.12, (system_score / 100.0) * bias))
-            hotspots.append(
-                {
-                    "label": hotspot["label"],
-                    "system_key": hotspot["system_key"],
-                    "x": hotspot["x"],
-                    "y": hotspot["y"],
-                    "r": hotspot["r"],
-                    "intensity": round(float(intensity), 3),
-                }
-            )
-        strongest_hotspot = max(hotspots, key=lambda item: item["intensity"])
-        strongest_system = next(
-            system for system in systems if system["key"] == strongest_hotspot["system_key"]
-        )
-        views.append(
-            {
-                "key": template["key"],
-                "label": template["label"],
-                "description": template["description"],
-                "annotation": f"Most visible signal: {strongest_system['label']}",
-                "hotspots": hotspots,
-            }
-        )
-    return views
-
-
 def _build_scorecard(
     *,
-    preds: np.ndarray,
     curve: list[dict[str, tp.Any]],
     structural_metrics: dict[str, float],
     modality: str,
 ) -> dict[str, tp.Any]:
-    systems, laterality = _system_score_rows(preds)
-    weighted_total = sum(system["score"] * float(system["weight"]) for system in systems)
-    overall_score = _clamp_score(weighted_total)
-    dominant_system = max(systems, key=lambda system: system["score"])
-    weakest_system = min(systems, key=lambda system: system["score"])
     peak_point = max(curve, key=lambda point: point["score"])
     hook_delta_pct = (
         round(_relative_pct(structural_metrics["Opening"], structural_metrics["Middle"]), 1)
@@ -377,126 +91,12 @@ def _build_scorecard(
         shape_text = "Sequence-level shape is limited for this modality."
 
     return {
-        "overall_score": overall_score,
-        "overall_grade": _grade(overall_score),
-        "overall_band": _score_band(overall_score),
-        "headline": f"{_score_band(overall_score)} {dominant_system['label'].lower()} profile",
-        "summary": (
-            f"Strongest signal is {dominant_system['label']} ({dominant_system['score']}/100). "
-            f"Weakest signal is {weakest_system['label']} ({weakest_system['score']}/100)."
-        ),
+        "peak_moment": {
+            "label": "Best moment",
+            "at_s": round(float(peak_point["midpoint_s"]), 3),
+            "score": round(float(peak_point["score"]), 6),
+        },
         "shape_summary": shape_text,
-        "peak_moment": {
-            "label": "Best moment",
-            "at_s": round(float(peak_point["midpoint_s"]), 3),
-            "score": round(float(peak_point["score"]), 6),
-        },
-        "dominant_system": {
-            "key": dominant_system["key"],
-            "label": dominant_system["label"],
-            "score": dominant_system["score"],
-        },
-        "weakest_system": {
-            "key": weakest_system["key"],
-            "label": weakest_system["label"],
-            "score": weakest_system["score"],
-        },
-        "systems": [
-            {
-                "key": system["key"],
-                "label": system["label"],
-                "score": system["score"],
-                "grade": system["grade"],
-                "band": system["band"],
-                "description": system["description"],
-                "readout": system["readout"],
-            }
-            for system in systems
-        ],
-        "laterality": laterality,
-        "brain_views": _build_brain_views(
-            systems,
-            laterality_index=float(laterality["laterality_index"]),
-        ),
-        "friendly_metrics": [
-            {
-                "key": name.lower(),
-                "metric": name,
-                "label": FRIENDLY_METRIC_LABELS[name]["label"],
-                "description": FRIENDLY_METRIC_LABELS[name]["description"],
-                "value": round(float(structural_metrics[name]), 6),
-            }
-            for name in DISPLAY_METRICS
-            if name in structural_metrics
-        ],
-    }
-
-
-def _build_fixture_scorecard(
-    *,
-    asset_name: str,
-    label: str,
-    modality: str,
-    curve: list[dict[str, tp.Any]],
-    structural_metrics: dict[str, float],
-) -> dict[str, tp.Any]:
-    digest = hashlib.sha256(f"{label}:{asset_name}:{modality}:scorecard".encode("utf-8")).digest()
-    systems = []
-    for index, definition in enumerate(SYSTEM_DEFINITIONS):
-        score = 40 + digest[index] % 45
-        systems.append(
-            {
-                "key": definition["key"],
-                "label": definition["label"],
-                "score": score,
-                "grade": _grade(score),
-                "band": _score_band(score),
-                "description": definition["description"],
-                "readout": definition["high_text"] if score >= 60 else definition["low_text"],
-            }
-        )
-    overall_score = _clamp_score(
-        sum(system["score"] * float(definition["weight"]) for system, definition in zip(systems, SYSTEM_DEFINITIONS))
-    )
-    dominant_system = max(systems, key=lambda system: system["score"])
-    weakest_system = min(systems, key=lambda system: system["score"])
-    peak_point = max(curve, key=lambda point: point["score"])
-    laterality_index = round(((digest[7] / 255.0) - 0.5) * 0.24, 3)
-    laterality = {
-        "left_share_pct": round(50 + laterality_index * 100, 1),
-        "right_share_pct": round(50 - laterality_index * 100, 1),
-        "laterality_index": laterality_index,
-        "label": "Balanced" if abs(laterality_index) <= 0.05 else ("Left-leaning" if laterality_index > 0 else "Right-leaning"),
-        "text": "Fixture summary for development builds.",
-    }
-    return {
-        "overall_score": overall_score,
-        "overall_grade": _grade(overall_score),
-        "overall_band": _score_band(overall_score),
-        "headline": f"{_score_band(overall_score)} {dominant_system['label'].lower()} profile",
-        "summary": (
-            f"Strongest signal is {dominant_system['label']} ({dominant_system['score']}/100). "
-            f"Weakest signal is {weakest_system['label']} ({weakest_system['score']}/100)."
-        ),
-        "shape_summary": "Fixture summary for development builds.",
-        "peak_moment": {
-            "label": "Best moment",
-            "at_s": round(float(peak_point["midpoint_s"]), 3),
-            "score": round(float(peak_point["score"]), 6),
-        },
-        "dominant_system": {
-            "key": dominant_system["key"],
-            "label": dominant_system["label"],
-            "score": dominant_system["score"],
-        },
-        "weakest_system": {
-            "key": weakest_system["key"],
-            "label": weakest_system["label"],
-            "score": weakest_system["score"],
-        },
-        "systems": systems,
-        "laterality": laterality,
-        "brain_views": _build_brain_views(systems, laterality_index=float(laterality_index)),
         "friendly_metrics": [
             {
                 "key": name.lower(),
@@ -566,7 +166,6 @@ def build_stimulus_analysis(
         "structural_metrics": structural_metrics,
         "supported_metrics": supported_metrics,
         "scorecard": _build_scorecard(
-            preds=preds,
             curve=curve,
             structural_metrics=structural_metrics,
             modality=modality,
@@ -584,10 +183,10 @@ def summarize_single(
 ) -> dict[str, tp.Any]:
     """Return the unified result schema for a single stimulus."""
     observations = _single_observations(
-        scorecard=stimulus["scorecard"],
         metrics=stimulus["structural_metrics"],
         modality=stimulus["modality"],
         supported_metrics=stimulus["supported_metrics"],
+        curve=stimulus["curve"],
     )
     diagnostics = {
         "tie_threshold_pct": round(tie_threshold_pct, 3),
@@ -623,11 +222,6 @@ def summarize_comparison(
         supported_metrics_b=stimulus_b["supported_metrics"],
         threshold_pct=tie_threshold_pct,
     )
-    comparison["engagement"] = _compare_engagement_profiles(
-        stimulus_a["scorecard"],
-        stimulus_b["scorecard"],
-        threshold_pct=tie_threshold_pct,
-    )
     diagnostics = {
         "tie_threshold_pct": round(tie_threshold_pct, 3),
         "tie_threshold_basis": threshold_basis,
@@ -642,7 +236,7 @@ def summarize_comparison(
         "comparison": comparison,
         "observations": _comparison_observations(
             comparison["metrics"],
-            engagement=comparison["engagement"],
+            summary=comparison["summary"],
         ),
         "diagnostics": diagnostics,
         "disclaimer": DISCLAIMER,
@@ -714,12 +308,10 @@ def _fixture_stimulus(asset_name: str, *, label: str, modality: str) -> dict[str
         "curve": points,
         "structural_metrics": metrics,
         "supported_metrics": supported_metrics,
-        "scorecard": _build_fixture_scorecard(
-            asset_name=asset_name,
-            label=label,
-            modality=modality,
+        "scorecard": _build_scorecard(
             curve=points,
             structural_metrics=metrics,
+            modality=modality,
         ),
         "diagnostics": {
             "model_id": "fixture",
@@ -786,6 +378,8 @@ def _structural_metrics(curve: list[dict[str, tp.Any]]) -> dict[str, float]:
 
 def _segment_slices(scores: np.ndarray) -> tuple[slice, slice, slice]:
     count = int(scores.size)
+    if count == 1:
+        return slice(0, 1), slice(0, 1), slice(0, 1)
     edge = max(1, int(math.ceil(count * 0.2)))
     opening_end = min(edge, count)
     closing_start = max(count - edge, 0)
@@ -795,6 +389,7 @@ def _segment_slices(scores: np.ndarray) -> tuple[slice, slice, slice]:
     else:
         middle_start = opening_end
         middle_end = closing_start
+    middle_end = min(middle_end, count)
     if middle_start >= middle_end:
         middle_start = min(max(count // 2, 0), max(count - 1, 0))
         middle_end = min(middle_start + 1, count)
@@ -867,114 +462,31 @@ def _compare_metrics(
     }
 
 
-def _compare_engagement_profiles(
-    scorecard_a: dict[str, tp.Any],
-    scorecard_b: dict[str, tp.Any],
-    *,
-    threshold_pct: float,
-) -> dict[str, tp.Any]:
-    overall_a = float(scorecard_a["overall_score"])
-    overall_b = float(scorecard_b["overall_score"])
-    overall_gap_pct = _symmetric_gap_pct(overall_a, overall_b)
-    if overall_gap_pct <= threshold_pct:
-        overall_winner = "tie"
-        headline = (
-            f"Both creatives land in the same overall range ({int(round(overall_a))} vs {int(round(overall_b))})."
-        )
-    elif overall_a > overall_b:
-        overall_winner = "A"
-        headline = f"A leads overall ({int(round(overall_a))} vs {int(round(overall_b))})."
-    else:
-        overall_winner = "B"
-        headline = f"B leads overall ({int(round(overall_b))} vs {int(round(overall_a))})."
-
-    systems_a = {item["key"]: item for item in scorecard_a["systems"]}
-    systems_b = {item["key"]: item for item in scorecard_b["systems"]}
-    system_rows = []
-    for definition in SYSTEM_DEFINITIONS:
-        key = definition["key"]
-        system_a = systems_a[key]
-        system_b = systems_b[key]
-        a_score = float(system_a["score"])
-        b_score = float(system_b["score"])
-        gap_pct = _symmetric_gap_pct(a_score, b_score)
-        if gap_pct <= threshold_pct:
-            winner = "tie"
-        elif a_score > b_score:
-            winner = "A"
-        else:
-            winner = "B"
-        system_rows.append(
-            {
-                "key": key,
-                "label": definition["label"],
-                "description": definition["description"],
-                "a": int(round(a_score)),
-                "b": int(round(b_score)),
-                "winner": winner,
-                "gap_pct": round(gap_pct, 1),
-                "delta_pct": round(_relative_to_b_pct(a_score, b_score), 1),
-            }
-        )
-
-    ranked_edges = [row for row in system_rows if row["winner"] != "tie"]
-    ranked_edges.sort(key=lambda row: row["gap_pct"], reverse=True)
-    if ranked_edges:
-        top_edge = ranked_edges[0]
-        if top_edge["winner"] == "A":
-            secondary = f"A's clearest edge is {top_edge['label'].lower()}."
-        else:
-            secondary = f"B's clearest edge is {top_edge['label'].lower()}."
-    else:
-        secondary = "No single engagement system breaks away from the other."
-
-    return {
-        "overall": {
-            "a": int(round(overall_a)),
-            "b": int(round(overall_b)),
-            "winner": overall_winner,
-            "gap_pct": round(overall_gap_pct, 1),
-            "headline": headline,
-            "secondary": secondary,
-        },
-        "systems": system_rows,
-    }
-
-
 def _comparison_observations(
     metrics: list[dict[str, tp.Any]],
     *,
-    engagement: dict[str, tp.Any],
+    summary: dict[str, tp.Any],
 ) -> list[str]:
-    observations = []
-    overall = engagement["overall"]
-    if overall["winner"] == "tie":
-        observations.append(
-            f"Overall, the two creatives land in the same range ({overall['a']} vs {overall['b']})."
-        )
-    elif overall["winner"] == "A":
-        observations.append(f"A leads the overall engagement scorecard, {overall['a']} vs {overall['b']}.")
-    else:
-        observations.append(f"B leads the overall engagement scorecard, {overall['b']} vs {overall['a']}.")
+    observations = [summary["summary_line"]]
 
-    lead_systems = [row for row in engagement["systems"] if row["winner"] != "tie"]
-    if lead_systems:
-        lead_systems.sort(key=lambda row: row["gap_pct"], reverse=True)
-        top_system = lead_systems[0]
-        if top_system["winner"] == "A":
+    lead_metrics = [row for row in metrics if row["winner"] != "tie"]
+    if lead_metrics:
+        lead_metrics.sort(key=lambda row: row["gap_pct"], reverse=True)
+        top_metric = lead_metrics[0]
+        if top_metric["winner"] == "A":
             observations.append(
-                f"A's strongest edge is {top_system['label']} ({top_system['a']} vs {top_system['b']})."
+                f"A's clearest edge is {top_metric['label']} ({top_metric['a']:.3f} vs {top_metric['b']:.3f})."
             )
         else:
             observations.append(
-                f"B's strongest edge is {top_system['label']} ({top_system['b']} vs {top_system['a']})."
+                f"B's clearest edge is {top_metric['label']} ({top_metric['b']:.3f} vs {top_metric['a']:.3f})."
             )
 
-    tied_systems = [row for row in engagement["systems"] if row["winner"] == "tie"]
-    if tied_systems:
-        closest = min(tied_systems, key=lambda row: row["gap_pct"])
+    tied_metrics = [row for row in metrics if row["winner"] == "tie"]
+    if tied_metrics:
+        closest = min(tied_metrics, key=lambda row: row["gap_pct"])
         observations.append(
-            f"Both creatives are effectively tied on {closest['label']} (gap {closest['gap_pct']:.1f}%)."
+            f"Both versions are effectively tied on {closest['label']} (gap {closest['gap_pct']:.1f}%)."
         )
 
     if metrics:
@@ -982,40 +494,31 @@ def _comparison_observations(
         if peak_row is not None and peak_row["winner"] != "tie":
             if peak_row["winner"] == "A":
                 observations.append(
-                    f"A owns the single strongest moment, with Peak {peak_row['a']:.3f} vs {peak_row['b']:.3f}."
+                    f"A owns the single strongest moment, with Best moment {peak_row['a']:.3f} vs {peak_row['b']:.3f}."
                 )
             else:
                 observations.append(
-                    f"B owns the single strongest moment, with Peak {peak_row['b']:.3f} vs {peak_row['a']:.3f}."
+                    f"B owns the single strongest moment, with Best moment {peak_row['b']:.3f} vs {peak_row['a']:.3f}."
                 )
     return observations[:4]
 
 
 def _single_observations(
     *,
-    scorecard: dict[str, tp.Any],
     metrics: dict[str, float],
     modality: str,
     supported_metrics: list[str],
+    curve: list[dict[str, tp.Any]],
 ) -> list[str]:
-    observations = [
-        f"Overall engagement score is {scorecard['overall_score']}/100 ({scorecard['overall_band'].lower()}).",
-        (
-            f"Strongest signal is {scorecard['dominant_system']['label']} "
-            f"({scorecard['dominant_system']['score']}/100)."
-        ),
-        (
-            f"Weakest signal is {scorecard['weakest_system']['label']} "
-            f"({scorecard['weakest_system']['score']}/100)."
-        ),
-    ]
     if modality == "image" or supported_metrics == ["Peak"]:
-        observations.append(f"Best moment score is {metrics['Peak']:.3f}.")
-        return observations
+        return [f"Best moment score is {metrics['Peak']:.3f}."]
 
-    observations.append(
-        f"Best moment lands at {scorecard['peak_moment']['at_s']:.1f}s with score {scorecard['peak_moment']['score']:.3f}."
-    )
+    observations = []
+    if curve:
+        peak = max(curve, key=lambda point: point["score"])
+        observations.append(
+            f"Best moment lands at {float(peak['midpoint_s']):.1f}s with score {float(peak['score']):.3f}."
+        )
     if "Opening" in metrics and "Middle" in metrics and "Closing" in metrics:
         opening_vs_middle = _relative_pct(metrics["Opening"], metrics["Middle"])
         closing_vs_middle = _relative_pct(metrics["Closing"], metrics["Middle"])
@@ -1024,7 +527,11 @@ def _single_observations(
             f"{'above' if opening_vs_middle >= 0 else 'below'} its mid-sequence level and finishes "
             f"{abs(closing_vs_middle):.1f}% {'above' if closing_vs_middle >= 0 else 'below'} it."
         )
-    return observations[:5]
+    if "Spread" in metrics and "Consistency" in metrics:
+        observations.append(
+            f"Variation is {metrics['Spread']:.3f} with steadiness {metrics['Consistency']:.1f}."
+        )
+    return observations[:4]
 
 
 def _relative_to_b_pct(a_value: float, b_value: float) -> float:
